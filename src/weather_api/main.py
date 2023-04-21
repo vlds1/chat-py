@@ -1,4 +1,7 @@
+import asyncio
 import os
+
+
 import requests
 from dotenv import load_dotenv
 import datetime
@@ -30,19 +33,19 @@ async def get_weather(city, weather_token=token):
             "current_weather": cur_weather,
             "current_wind_speed": cur_wind,
             "current_humidity": cur_humidity,
-            "sunrise": sunrise_timestampt,
-            "sunset": sunset_timestampt,
-            "day_duration": day_duration,
+            "sunrise": sunrise_timestampt.strftime("%m.%d.%Y %H:%M:%S"),
+            "sunset": sunset_timestampt.strftime("%m.%d.%Y %H:%M:%S"),
+            "day_duration": str(day_duration)
         }
 
     except Exception as ex:
         raise Exception("Check city name")
 
 
-def main():
+async def main():
     city = input("city: ")
-    get_weather(city, weather_token=token)
+    await get_weather(city, weather_token=token)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

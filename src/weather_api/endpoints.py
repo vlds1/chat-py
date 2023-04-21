@@ -1,9 +1,8 @@
-import json
 import os
 from fastapi import APIRouter, Path
 
-from weather_api.main import get_weather
-from weather_api.schema import WeatherSchema
+from src.weather_api.main import get_weather
+from src.weather_api.schema import WeatherSchema
 from dotenv import load_dotenv
 import asyncio
 from aiokafka import AIOKafkaProducer

@@ -4,7 +4,7 @@ from pathlib import Path
 
 # This path was added to solve some problems with absolute
 # imports in order to run this script as an executable file.
-from weather_api.endpoints import routers
+from src.weather_api.endpoints import routers
 
 sys.path.append(str(Path(__file__).parent.parent))
 
