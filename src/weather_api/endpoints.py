@@ -1,3 +1,4 @@
+import json
 import os
 from fastapi import APIRouter, Path
 
@@ -32,12 +33,14 @@ async def send_weather(
         city: str = Path()
 ):
     producer = AIOKafkaProducer(loop=loop,
-                                bootstrap_servers=servers
+                                bootstrap_servers=servers,
                                 )
     await producer.start()
     try:
         print(f'Sending weather_api in city: {city}')
-        data = get_weather(city)
-        await producer.send_and_wait(topic=topic, value=data)
+        data = await get_weather(city)
+
+        await producer.send_and_wait(topic, bytes(str(data), "utf-8"))
+
     finally:
         await producer.stop()

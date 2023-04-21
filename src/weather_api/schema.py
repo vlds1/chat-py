@@ -12,7 +12,7 @@ class WeatherSchema(BaseModel):
         orm_mode = True
 
     city: str
-    current_temerature: Decimal
+    current_temperature: Decimal
     current_weather: str
     current_wind_speed: Decimal
     current_humidity: int

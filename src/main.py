@@ -4,7 +4,7 @@ from pathlib import Path
 
 # This path was added to solve some problems with absolute
 # imports in order to run this script as an executable file.
-from weather_api import routers
+from weather_api.endpoints import routers
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -20,7 +20,6 @@ def get_application() -> "FastAPI":
     """Get FastAPI app"""
 
     app = FastAPI(
-        title=settings.project_name,
         root_path=settings.root_path,
         version=settings.app_version,
         debug=settings.debug

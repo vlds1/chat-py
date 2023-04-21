@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     root_path: str = ""
     app_version: str = "latest"
 
-    project_name: str
-    app_slug: str
+    project_name: str = "weather-collector"
+    app_slug: str = ""
 
     debug: bool | None
 
