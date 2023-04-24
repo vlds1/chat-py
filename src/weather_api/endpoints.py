@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter, Path
 
-from src.weather_api.main import get_weather
+from src.weather_api.services import get_weather
 from src.weather_api.schema import WeatherSchema
 from dotenv import load_dotenv
 import asyncio
@@ -12,6 +12,7 @@ load_dotenv()
 routers = APIRouter()
 
 loop = asyncio.get_event_loop()
+
 
 topic = os.environ.get("KAFKA_TOPIC")
 servers = os.environ.get("KAFKA_BOOTSTRAP_SERVERS")

@@ -1,9 +1,9 @@
 import asyncio
 import os
 
-
 import requests
 from dotenv import load_dotenv
+
 from src.weather_api.utils import extract_weather_data
 
 load_dotenv()
@@ -19,14 +19,5 @@ async def get_weather(city: str, weather_token: str = token) -> dict:
         data = r.json()
         result = await extract_weather_data(data)
         return result
-    except Exception as ex:
-        raise Exception("Check city name")
-
-
-async def main():
-    city = input("city: ")
-    await get_weather(city, weather_token=token)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    except ...:
+        raise ValueError("Check city name")

@@ -1,7 +1,7 @@
 import datetime
 
 
-async def extract_weather_data(data):
+async def extract_weather_data(data: dict) -> dict:
     city = data["name"]
     temperature = data["main"]["temp"]
     humidity = data["main"]["humidity"]

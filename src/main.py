@@ -1,9 +1,7 @@
+import asyncio
 import sys
 from pathlib import Path
 
-
-# This path was added to solve some problems with absolute
-# imports in order to run this script as an executable file.
 from src.weather_api.endpoints import routers
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -30,11 +28,6 @@ def get_application() -> "FastAPI":
 
 
 app = get_application()
-
-# -> if you need something to do when app starts
-# @app.on_event('startup')
-# def on_startup():
-#     . . .
 
 
 def main():
