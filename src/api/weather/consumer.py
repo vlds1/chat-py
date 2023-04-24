@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 from dotenv import load_dotenv
 
@@ -21,7 +22,10 @@ async def consume():
     await consumer.start()
     try:
         async for msg in consumer:
-            print(f'Consumer msg: {msg}')
+            data = msg.value.decode("utf-8")
+            result = json.loads(data.replace("'", '"'))
+            # здесь будет запись в mongoDB
+
     finally:
         await consumer.stop()
 
