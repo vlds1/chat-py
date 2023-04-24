@@ -1,6 +1,4 @@
-from decimal import Decimal
-
-from pydantic import BaseModel
+from pydantic import BaseModel, PositiveFloat
 
 
 class Message(BaseModel):
@@ -12,9 +10,9 @@ class WeatherSchema(BaseModel):
         orm_mode = True
 
     city: str
-    current_temperature: Decimal
+    current_temperature: PositiveFloat
     current_weather: str
-    current_wind_speed: Decimal
+    current_wind_speed: PositiveFloat
     current_humidity: int
     sunrise: str
     sunset: str
