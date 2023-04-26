@@ -1,9 +1,8 @@
 import sys
 from pathlib import Path
 
+from src.core.settings.mongodb import mongo_client
 
-# This path was added to solve some problems with absolute
-# imports in order to run this script as an executable file.
 sys.path.append(str(Path(__file__).parent.parent))
 
 import uvicorn
@@ -34,11 +33,7 @@ def get_application() -> "FastAPI":
 
 
 app = get_application()
-
-# -> if you need something to do when app starts
-# @app.on_event('startup')
-# def on_startup():
-#     . . .
+app.state.mongo_client = mongo_client
 
 
 def main():

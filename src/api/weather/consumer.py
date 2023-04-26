@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from aiokafka import AIOKafkaConsumer
 from fastapi import APIRouter
 
+from src.api.weather.crud import create_record
+
 routers = APIRouter()
 loop = asyncio.get_event_loop()
 load_dotenv()
@@ -24,8 +26,9 @@ async def consume():
         async for msg in consumer:
             data = msg.value.decode("utf-8")
             result = json.loads(data.replace("'", '"'))
+            print(result)
             # здесь будет запись в mongoDB
-
+            await create_record(result)
     finally:
         await consumer.stop()
 
