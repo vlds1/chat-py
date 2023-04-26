@@ -1,4 +1,7 @@
+import asyncio
 import datetime
+from src.core.settings import settings
+from aiokafka import AIOKafkaProducer
 
 
 async def extract_weather_data(data: dict) -> dict:
@@ -20,3 +23,9 @@ async def extract_weather_data(data: dict) -> dict:
         "sunset": sunset.strftime("%m.%d.%Y %H:%M:%S"),
         "day_duration": str(day_duration)
     }
+
+
+async def get_producer():
+    loop = asyncio.get_event_loop()
+    producer = AIOKafkaProducer(loop=loop, bootstrap_servers=settings.kafka_bootstrap_servers)
+    return producer
