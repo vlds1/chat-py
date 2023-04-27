@@ -1,17 +1,15 @@
 import sys
 from pathlib import Path
 
+from src.api.routers import graphql_routes
 from src.core.settings.mongodb import mongo_client
 
 sys.path.append(str(Path(__file__).parent.parent))
 
 import uvicorn
 from fastapi import FastAPI
-
-
 from src.api import routers
 from src.core import get_settings
-
 from src.migrations import run_migrations
 
 
@@ -25,7 +23,8 @@ def get_application() -> "FastAPI":
         title=settings.project_name,
         root_path=settings.root_path,
         version=settings.app_version,
-        debug=settings.debug
+        debug=settings.debug,
+        routes=graphql_routes
     )
 
     app.include_router(routers, prefix=settings.api_prefix)

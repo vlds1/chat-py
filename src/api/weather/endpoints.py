@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from src.core.settings.mongodb import weather_helper, weather_data_collection
+
+from src.api.weather.crud import get_records
 
 routers = APIRouter()
 
@@ -7,9 +8,7 @@ routers = APIRouter()
 @routers.get(
     "/get_records"
 )
-async def get_records() -> list:
-    documents = []
-    async for doc in weather_data_collection.find():
-        documents.append(weather_helper(doc))
-    return documents
+async def get_all_records() -> list:
+    result = await get_records()
+    return result
 

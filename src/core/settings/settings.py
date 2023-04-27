@@ -62,6 +62,10 @@ class Settings(BaseSettings):
     uvicorn: UvicornSettings = UvicornSettings()
     sqlalchemy: SqlAlchemySettings = SqlAlchemySettings()
 
+    kafka_topic: str
+    kafka_bootstrap_servers: str
+    kafka_consumer_group: str
+
 
 @lru_cache
 def get_settings() -> Settings:

@@ -1,7 +1,8 @@
-import os
 from fastapi import status
 from motor.motor_asyncio import AsyncIOMotorClient
 from sqlalchemy.testing.config import db_url
+
+from src.core.settings.mongodb import weather_data_collection, weather_helper
 
 
 async def create_record(input_data: dict) -> dict:
@@ -11,3 +12,10 @@ async def create_record(input_data: dict) -> dict:
 
     await collection.insert_one(input_data)
     return status.HTTP_200_OK
+
+
+async def get_records() -> list:
+    documents = []
+    async for doc in weather_data_collection.find():
+        documents.append(weather_helper(doc))
+    return documents
