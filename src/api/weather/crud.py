@@ -19,3 +19,8 @@ async def get_records() -> list:
     async for doc in weather_data_collection.find():
         documents.append(weather_helper(doc))
     return documents
+
+
+async def get_latest_record(city: str) -> dict:
+    document = await weather_data_collection.find_one({"city": city}, sort=[("_id", -1)], limit=1)
+    return document

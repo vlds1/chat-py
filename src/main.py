@@ -24,7 +24,7 @@ def get_application() -> "FastAPI":
         root_path=settings.root_path,
         version=settings.app_version,
         debug=settings.debug,
-        routes=graphql_routes
+        routes=graphql_routes,
     )
 
     app.include_router(routers, prefix=settings.api_prefix)
