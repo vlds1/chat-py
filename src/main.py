@@ -1,6 +1,10 @@
 import sys
 from pathlib import Path
 
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+
+from src.core.redis_tools.tools import redis_client
 from src.api.routers import graphql_routes
 from src.core.settings.mongodb import mongo_client
 
@@ -33,6 +37,11 @@ def get_application() -> "FastAPI":
 
 app = get_application()
 app.state.mongo_client = mongo_client
+
+
+@app.on_event("startup")
+async def startup_event():
+    FastAPICache.init(RedisBackend(redis_client), prefix="fastapi-cache")
 
 
 def main():

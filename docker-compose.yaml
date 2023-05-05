@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  mongo_db:
+    image: mongo
+    container_name: "mongo_db"
+    ports:
+      - "27017:27017"
+    networks:
+      - custom
+
+  redis_cash:
+    image: 'bitnami/redis:latest'
+    container_name: "redis_cash"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+      - redis-conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - custom
+
+
+networks:
+  custom:
+    driver: bridge
+
+volumes:
+  redis-data:
+  redis-conf:

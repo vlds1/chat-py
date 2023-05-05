@@ -66,6 +66,8 @@ class Settings(BaseSettings):
     kafka_bootstrap_servers: str
     kafka_consumer_group: str
 
+    redis_url: str
+
 
 @lru_cache
 def get_settings() -> Settings:
