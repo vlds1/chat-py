@@ -2,6 +2,7 @@ from fastapi import status
 from motor.motor_asyncio import AsyncIOMotorClient
 from sqlalchemy.testing.config import db_url
 
+from src.core.redis_tools.tools import redis_get_or_set
 from src.core.settings.mongodb import weather_data_collection, weather_helper
 
 
@@ -23,4 +24,5 @@ async def get_records() -> list:
 
 async def get_latest_record(city: str) -> dict:
     document = await weather_data_collection.find_one({"city": city}, {'_id': 0}, sort=[("_id", -1)], limit=1)
-    return document
+    data = await redis_get_or_set(key=city, data=document)
+    return data

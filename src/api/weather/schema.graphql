@@ -1,0 +1,21 @@
+schema {
+    query: WeatherSchema
+}
+
+type Weather {
+    _id: String
+    city: String!
+    current_temperature: Float!
+    current_humidity: Int!
+    current_weather: String!
+    current_wind_speed: Float!
+    sunrise: String!
+    sunset: String!
+    day_duration: String!
+    reqeust_time: String!
+}
+
+
+type WeatherSchema {
+     GetCityWeather(city: String): Weather
+}

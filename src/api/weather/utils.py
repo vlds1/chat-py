@@ -14,8 +14,10 @@ async def get_consumer() -> AIOKafkaConsumer:
     return consumer
 
 
-async def make_graphql_request(query: str) -> dict:
+async def make_graphql_request(query: str, variables: dict) -> dict:
     async with aiohttp.ClientSession() as session:
-        async with session.post('http://127.0.0.1:8000/graphql/', json={"query": query}) as response:
+        payload = dict({"query": query, "variables": variables})
+        print(payload)
+        async with session.post('http://127.0.0.1:8000/graphql/', json=payload) as response:
             response_json = await response.json()
             return response_json

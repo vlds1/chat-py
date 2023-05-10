@@ -27,19 +27,6 @@ async def get_all_records() -> list:
     return result
 
 
-@routers.get(
-    "/get_record/{city}",
-    response_model=None
-)
-@cache(expire=30)
-async def get_latest_record_city(
-        city: str = Path(),
-) -> list:
-    # sleep(5)
-    result = await get_latest_record(city)
-    return result
-
-
 @routers.get("/weather/{city}", response_model=None)
 async def get_graphql(
         city: str = Path()
@@ -47,18 +34,19 @@ async def get_graphql(
 
     weather_query = """
     query Weather {
-    weather (city: "Rostov-on-Don"){
-    	city
-		current_temperature
-        current_humidity
-        current_weather
-        current_wind_speed
-        sunrise
-        sunset
-        day_duration
+        weather (city: String) {
+            city
+            current_temperature
+            current_humidity
+            current_weather
+            current_wind_speed
+            sunrise
+            sunset
+            day_duration
+            reqeust_time
    }
 }
     """
-    response = await make_graphql_request(weather_query)
-    data = await redis_get_or_set(key="2", data=response)
-    return data
+    variables = {'city': city}
+    response = await make_graphql_request(weather_query, variables)
+    return response
