@@ -1,11 +1,9 @@
-from functools import lru_cache
-from pydantic import Field
-from uvicorn.config import (
-    HTTPProtocolType,
-    LoopSetupType,
-)
-from src.core.settings.base import _BaseModel
 from pydantic import BaseSettings
+from pydantic import Field
+from uvicorn.config import HTTPProtocolType
+from uvicorn.config import LoopSetupType
+
+from src.core.settings.base import _BaseModel
 
 
 class UvicornSettings(_BaseModel):
@@ -44,7 +42,6 @@ class Settings(BaseSettings):
     uvicorn: UvicornSettings = UvicornSettings()
 
 
-@lru_cache
 def get_settings() -> Settings:
     """Получение и кэширование настроек проекта."""
     _settings = Settings()

@@ -1,4 +1,5 @@
-from pydantic import BaseModel, PositiveFloat
+from pydantic import BaseModel
+from pydantic import PositiveFloat
 
 
 class Message(BaseModel):
@@ -17,3 +18,4 @@ class WeatherSchema(BaseModel):
     sunrise: str
     sunset: str
     day_duration: str
+    reqeust_time: str

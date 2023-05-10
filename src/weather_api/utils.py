@@ -1,10 +1,14 @@
 import asyncio
 import datetime
-from src.core.settings import settings
+
 from aiokafka import AIOKafkaProducer
 
+from src.core.settings import settings
+from src.weather_api.schema import WeatherSchema
 
-async def extract_weather_data(data: dict) -> dict:
+
+# применить пайдантик
+async def extract_weather_data(data: WeatherSchema) -> dict:
     city = data["name"]
     temperature = data["main"]["temp"]
     humidity = data["main"]["humidity"]
@@ -19,13 +23,18 @@ async def extract_weather_data(data: dict) -> dict:
         "current_humidity": humidity,
         "current_weather": weather,
         "current_wind_speed": wind,
-        "sunrise": sunrise.strftime("%m.%d.%Y %H:%M:%S"),
-        "sunset": sunset.strftime("%m.%d.%Y %H:%M:%S"),
-        "day_duration": str(day_duration)
+        "sunrise": sunrise.strftime("%H:%M:%S"),
+        "sunset": sunset.strftime("%H:%M:%S"),
+        "day_duration": str(day_duration),
+        "reqeust_time": datetime.datetime.now().strftime(
+            "%H:%M:%S - %Y-%m-%d"
+        ),
     }
 
 
-async def get_producer():
+async def get_producer() -> AIOKafkaProducer:
     loop = asyncio.get_event_loop()
-    producer = AIOKafkaProducer(loop=loop, bootstrap_servers=settings.kafka_bootstrap_servers)
+    producer = AIOKafkaProducer(
+        loop=loop, bootstrap_servers=settings.kafka_bootstrap_servers
+    )
     return producer
