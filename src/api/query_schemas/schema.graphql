@@ -1,5 +1,5 @@
 schema {
-    query: WeatherSchema
+    query: WeatherQuerySchema
 }
 
 type Weather {
@@ -12,10 +12,20 @@ type Weather {
     sunrise: String!
     sunset: String!
     day_duration: String!
-    reqeust_time: String!
+    request_time: String!
+}
+
+enum Cities{
+    MOSCOW
+    ROSTOV_ON_DON
+    BERLIN
+    WASHINGTON
+    KIEV
+    MINSK
+    PARIS
 }
 
 
-type WeatherSchema {
-     GetCityWeather(city: String): Weather
+type WeatherQuerySchema {
+     CityWeather(city: String): Weather
 }

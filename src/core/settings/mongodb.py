@@ -1,14 +1,20 @@
 import os
 
-from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
+from motor.motor_asyncio import AsyncIOMotorClient
 
 load_dotenv()
 
 db_ulr = os.environ.get("MONGODB_URL")
 
-mongo_client = AsyncIOMotorClient(db_ulr)
-database = mongo_client.weather_app
+
+def get_mongo_client() -> "AsyncIOMotorClient":
+    mongo_client = AsyncIOMotorClient(db_ulr)
+    return mongo_client
+
+
+db_client = get_mongo_client()
+database = db_client.weather_app
 
 # collections
 
@@ -29,4 +35,5 @@ def weather_helper(data) -> dict:
         "sunrise": data["sunrise"],
         "sunset": data["sunset"],
         "day_duration": data["day_duration"],
+        "request_time": data["request_time"],
     }

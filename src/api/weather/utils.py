@@ -22,7 +22,6 @@ async def make_graphql_request(query: str, variables: dict) -> dict:
         payload = dict({"query": query, "variables": variables})
         print(payload)
         async with session.post(
-            "http://127.0.0.1:8000/graphql/", json=payload
+            url=settings.graphql_url, json=payload
         ) as response:
-            response_json = await response.json()
-            return response_json
+            return await response.json()

@@ -1,23 +1,23 @@
 import sys
 from pathlib import Path
 
+import uvicorn
+from fastapi import FastAPI
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 
-from src.core.redis_tools.tools import redis_client
+from src.api import routers
 from src.api.routers import graphql_routes
-from src.core.settings.mongodb import mongo_client
+from src.core import get_settings
+from src.core.redis_tools.tools import redis_client
+from src.core.settings.mongodb import get_mongo_client
+from src.migrations import run_migrations
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-import uvicorn
-from fastapi import FastAPI
-from src.api import routers
-from src.core import get_settings
-from src.migrations import run_migrations
-
 
 settings = get_settings()
+db_client = get_mongo_client()
 
 
 def get_application() -> "FastAPI":
@@ -36,12 +36,12 @@ def get_application() -> "FastAPI":
 
 
 app = get_application()
-app.state.mongo_client = mongo_client
 
 
 @app.on_event("startup")
 async def startup_event():
     FastAPICache.init(RedisBackend(redis_client), prefix="fastapi-cache")
+    app.state.db_client = db_client
 
 
 def main():

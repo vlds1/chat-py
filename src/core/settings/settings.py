@@ -1,11 +1,10 @@
-from functools import lru_cache
 import typing
+from functools import lru_cache
+
 from pydantic import BaseSettings
 from pydantic import Field
-from uvicorn.config import (
-    HTTPProtocolType,
-    LoopSetupType,
-)
+from uvicorn.config import HTTPProtocolType
+from uvicorn.config import LoopSetupType
 
 from src.core.settings.base import _BaseModel
 
@@ -67,6 +66,8 @@ class Settings(BaseSettings):
     kafka_consumer_group: str
 
     redis_url: str
+    redis_ttl: int = 10
+    graphql_url: str
 
 
 @lru_cache
