@@ -1,5 +1,4 @@
 import typing
-from functools import lru_cache
 
 from pydantic import BaseSettings
 from pydantic import Field
@@ -70,7 +69,6 @@ class Settings(BaseSettings):
     graphql_url: str
 
 
-@lru_cache
 def get_settings() -> Settings:
     """Получение и кэширование настроек проекта."""
     _settings = Settings()

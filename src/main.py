@@ -5,6 +5,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
+from fastapi_limiter import FastAPILimiter
 
 from src.api import routers
 from src.api.routers import graphql_routes
@@ -42,6 +43,8 @@ app = get_application()
 async def startup_event():
     FastAPICache.init(RedisBackend(redis_client), prefix="fastapi-cache")
     app.state.db_client = db_client
+
+    await FastAPILimiter.init(redis_client)
 
 
 def main():
