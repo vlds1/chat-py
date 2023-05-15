@@ -74,3 +74,9 @@ websocket-client==1.5.1
 websockets==10.4
 wrapt==1.15.0
 yarl==1.8.2
+motor~=3.1.2
+aiokafka~=0.8.0
+graphene~=3.2.2
+ariadne~=0.19.1
+redis~=4.5.4
+aioredis~=2.0.1

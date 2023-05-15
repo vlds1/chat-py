@@ -1,0 +1,31 @@
+schema {
+    query: WeatherQuerySchema
+}
+
+type Weather {
+    _id: String
+    city: String!
+    current_temperature: Float!
+    current_humidity: Int!
+    current_weather: String!
+    current_wind_speed: Float!
+    sunrise: String!
+    sunset: String!
+    day_duration: String!
+    request_time: String!
+}
+
+enum Cities{
+    MOSCOW
+    ROSTOV_ON_DON
+    BERLIN
+    WASHINGTON
+    KIEV
+    MINSK
+    PARIS
+}
+
+
+type WeatherQuerySchema {
+     CityWeather(city: String): Weather
+}
