@@ -12,7 +12,6 @@ from src.api.routers import graphql_routes
 from src.core import get_settings
 from src.core.redis_tools.tools import redis_client
 from src.core.settings.mongodb import get_mongo_client
-from src.migrations import run_migrations
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -28,7 +27,7 @@ def get_application() -> "FastAPI":
         title=settings.project_name,
         root_path=settings.root_path,
         version=settings.app_version,
-        debug=settings.debug,
+        debug=True,
         routes=graphql_routes,
     )
 
@@ -48,7 +47,6 @@ async def startup_event():
 
 
 def main():
-    run_migrations(db_url=str(settings.sqlalchemy.url))
     uvicorn.run(**settings.uvicorn.dict())
 
 

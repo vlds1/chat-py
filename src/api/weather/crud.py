@@ -1,32 +1,43 @@
 from fastapi import Depends
 from fastapi import status
-from motor.motor_asyncio import AsyncIOMotorClient
-from sqlalchemy.testing.config import db_url
+from motor.motor_asyncio import AsyncIOMotorCollection
 
 from src.api.weather.schemas import WeatherSchema
 from src.core.redis_tools.tools import redis_get_or_set
-from src.core.settings.mongodb import weather_data_collection
-from src.core.settings.mongodb import weather_helper
 
 
-async def create_record(input_data: WeatherSchema = Depends()) -> int:
-    mongo_client = AsyncIOMotorClient(db_url)
-    db = mongo_client["weather_app"]
-    collection = db["weather_data"]
-    await collection.insert_one(input_data)
-    return status.HTTP_200_OK
+class MongoExtractor:
+    """
+    Class that allows getting data from MongoDB
+    """
+
+    def __init__(self, collection: AsyncIOMotorCollection) -> None:
+        self.collection = collection
+
+    async def get_latest_one(self, city: str) -> dict:
+        document = await self.collection.find_one(
+            {"city": city}, {"_id": 0}, sort=[("_id", -1)], limit=1
+        )
+        data = await redis_get_or_set(key=city, data=document)
+        return data
+
+    async def get_many(self) -> list:
+        documents = []
+        async for doc in self.collection.find():
+            documents.append(WeatherSchema(**doc))
+        return documents
 
 
-async def get_records() -> list:
-    documents = []
-    async for doc in weather_data_collection.find():
-        documents.append(weather_helper(doc))
-    return documents
+class MongoWriter:
+    """
+    Class which makes records in mongoDB
+    """
 
+    def __init__(self, collection: AsyncIOMotorCollection) -> None:
+        self.collection = collection
 
-async def get_latest_record(city: str) -> dict:
-    document = await weather_data_collection.find_one(
-        {"city": city}, {"_id": 0}, sort=[("_id", -1)], limit=1
-    )
-    data = await redis_get_or_set(key=city, data=document)
-    return data
+    async def create_record(
+        self, input_data: WeatherSchema = Depends()
+    ) -> int:
+        await self.collection.insert_one(input_data)
+        return status.HTTP_200_OK

@@ -12,7 +12,7 @@ routers = APIRouter()
 
 @routers.get(
     "/weather/{city}",
-    response_model=None,
+    response_model=WeatherSchema,
     dependencies=[
         Depends(RateLimiter(times=5, seconds=10)),
     ],
@@ -20,4 +20,4 @@ routers = APIRouter()
 async def get_graphql(city: str = Path()) -> WeatherSchema:
     variables = {"city": city}
     response = await make_graphql_request(weather_query, variables)
-    return response
+    return WeatherSchema(**response["data"]["CityWeather"])
