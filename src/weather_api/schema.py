@@ -18,4 +18,4 @@ class WeatherSchema(BaseModel):
     sunrise: str
     sunset: str
     day_duration: str
-    reqeust_time: str
+    request_time: str

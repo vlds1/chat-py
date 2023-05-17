@@ -37,7 +37,9 @@ class Settings(BaseSettings):
     kafka_topic: str
     kafka_bootstrap_servers: str
     kafka_consumer_group: str
+
     open_weather_token: str
+    openweather_url: str
 
     uvicorn: UvicornSettings = UvicornSettings()
 
