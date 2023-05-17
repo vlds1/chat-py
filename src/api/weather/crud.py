@@ -40,7 +40,5 @@ class MongoWriter:
     async def create_record(
         self, input_data: WeatherSchema = Depends()
     ) -> int:
-        # import pdb
-        # pdb.set_trace()
         await self.collection.insert_one(input_data)
         return status.HTTP_200_OK

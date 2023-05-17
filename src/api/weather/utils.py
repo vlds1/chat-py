@@ -32,7 +32,6 @@ async def string_decoder(data_string: str) -> dict:
     for pair in pairs:
         if "=" in pair:
             key, value = pair.split("=")
-
             value = value.strip('"')
             data_dict[key] = value
     return data_dict
