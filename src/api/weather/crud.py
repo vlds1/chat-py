@@ -1,6 +1,7 @@
 from fastapi import Depends
 from fastapi import status
 from motor.motor_asyncio import AsyncIOMotorCollection
+from pydantic.main import ModelMetaclass
 
 from src.api.weather.schemas import WeatherSchema
 from src.core.redis_tools.tools import redis_get_or_set
@@ -21,10 +22,10 @@ class MongoExtractor:
         data = await redis_get_or_set(key=city, data=document)
         return data
 
-    async def get_many(self) -> list:
+    async def get_many(self, schema: ModelMetaclass) -> list:
         documents = []
         async for doc in self.collection.find():
-            documents.append(WeatherSchema(**doc))
+            documents.append(schema(**doc))
         return documents
 
 
