@@ -17,6 +17,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+bitnami/
 build/
 develop-eggs/
 dist/
@@ -115,6 +116,8 @@ celerybeat.pid
 
 # Environments
 .env
+/.env
+..env
 .venv
 env/
 venv/
@@ -140,6 +143,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-bitnami/
+
 /data
 static/
