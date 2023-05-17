@@ -24,3 +24,15 @@ async def make_graphql_request(query: str, variables: dict) -> dict:
             url=settings.graphql_url, json=payload
         ) as response:
             return await response.json()
+
+
+async def string_decoder(data_string: str) -> dict:
+    data_dict = dict()
+    pairs = data_string.split()
+    for pair in pairs:
+        if "=" in pair:
+            key, value = pair.split("=")
+
+            value = value.strip('"')
+            data_dict[key] = value
+    return data_dict

@@ -1,10 +1,11 @@
 import asyncio
-import json
 
 from fastapi import APIRouter
 
 from src.api.weather.crud import MongoWriter
 from src.api.weather.utils import get_consumer
+from src.api.weather.utils import string_decoder
+from src.core.settings.mongodb import weather_data_collection
 
 routers = APIRouter()
 
@@ -16,14 +17,15 @@ class Consumer:
 
     @staticmethod
     async def consume():
+        db = MongoWriter(collection=weather_data_collection)
         consumer = await get_consumer()
         await consumer.start()
         try:
             async for msg in consumer:
                 data = msg.value.decode("utf-8")
-                result = json.loads(data.replace("'", '"'))
+                result = await string_decoder(data.replace("'", '"'))
                 print("Consumed data: ", result)
-                await MongoWriter.create_record(result)
+                await db.create_record(result)
         finally:
             await consumer.stop()
 
