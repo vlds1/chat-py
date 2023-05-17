@@ -54,5 +54,5 @@ async def get_weather(city: str) -> dict:
         data = r.json()
         result = await extract_weather_data(data, schema=WeatherSchema)
         return result
-    except ...:
+    except ValueError:
         raise ValueError("Check city name")
