@@ -46,7 +46,7 @@ async def login_user(user_data: dict) -> dict:
             "data": {"access_token": access_token, "refresh_token": refresh_token}
         }, 200
     except ValidationError as e:
-        return {"err": e.__str__()}, 400
+        return {"detail": e.__str__()}, 400
 
 
 async def update_access_token(data):
@@ -65,4 +65,4 @@ async def update_access_token(data):
         new_access_token = await create_token(refresh_token_data, "access", 10)
         return {"access_token": new_access_token}, 201
     except InvalidSignatureError as e:
-        return {"err": e.__str__()}, 400
+        return {"detail": e.__str__()}, 400

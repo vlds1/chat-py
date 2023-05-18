@@ -1,10 +1,6 @@
-from flask import Blueprint
-from flask import make_response
-from flask import request
+from flask import Blueprint, make_response, request
 
-from core.endpoints.crud import create_new_user
-from core.endpoints.crud import login_user
-from core.endpoints.crud import update_access_token
+from core.endpoints.crud import create_new_user, login_user, update_access_token
 
 auth = Blueprint(
     "authentication",
@@ -20,8 +16,8 @@ async def registration():
 
 @auth.route("/login", methods=["POST"])
 async def login():
-    registration_res = await login_user(request.get_json())
-    return make_response(registration_res)
+    login_res = await login_user(request.get_json())
+    return make_response(login_res)
 
 
 @auth.route("/token/refresh", methods=["POST"])

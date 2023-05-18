@@ -1,6 +1,6 @@
 import pytest
-from test_data import login_test_data
-from test_data import register_test_data
+
+from core.tests.test_data import login_test_data, register_test_data
 
 
 @pytest.mark.parametrize("email, password, expected_res", register_test_data)

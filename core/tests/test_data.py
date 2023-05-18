@@ -2,7 +2,7 @@ register_test_data = [
     (
         "xxx@yandex.ru",
         "passw124ord",
-        {"detail": "user has been registered", "status": 201},
+        {"detail": "user has been registered"},
     ),
     (
         "vu",
@@ -14,8 +14,7 @@ register_test_data = [
                     "msg": "value is not a valid email address",
                     "type": "value_error.email",
                 }
-            ],
-            "status": 400,
+            ]
         },
     ),
 ]
