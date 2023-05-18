@@ -6,7 +6,9 @@ from core import create_app
 
 @pytest.fixture()
 def app():
-    app = create_app(mongo_url="mongodb://localhost:27017", db_name="chat-test")
+    app = create_app(
+        mongo_url="mongodb://localhost:27017/chat-test", db_name="chat-test"
+    )
     app.config.update(
         {
             "TESTING": True,
@@ -15,7 +17,7 @@ def app():
     yield app
 
     client = MongoClient("mongodb://localhost:27017/chat-test")
-    db = client["None"]
+    db = client["chat-test"]
     db.drop_collection("users")
 
 

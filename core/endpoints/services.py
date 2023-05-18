@@ -2,6 +2,8 @@ import datetime
 
 import jwt
 
+from core.config import JWT_SECRET_KEY
+
 
 async def create_token(user_data: dict, token_type: str, exp: int) -> str:
     payload = {
@@ -12,7 +14,7 @@ async def create_token(user_data: dict, token_type: str, exp: int) -> str:
     }
     token = jwt.encode(
         payload=payload,
-        key="b37e50cedcd3e3f1ff64f4afc0422084ae694253cf399326868e07a35f4",
+        key=JWT_SECRET_KEY,
         algorithm="HS256",
     )
 

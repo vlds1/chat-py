@@ -5,12 +5,13 @@ import jwt
 from jwt import InvalidSignatureError
 from pydantic import ValidationError
 
+from core.config import JWT_SECRET_KEY
 from core.database.db import get_users_collection
 from core.endpoints.services import create_token
-from core.schemas.schemas import UserSchema
+from core.schemas.schemas import JWTSchema, UserSchema
 
 
-async def create_new_user(user_data: dict) -> dict:
+async def create_new_user(user_data: dict) -> tuple:
     users_collection = get_users_collection()
     try:
         user_data = UserSchema(**user_data).dict()
@@ -30,7 +31,7 @@ async def create_new_user(user_data: dict) -> dict:
         return {"detail": e.errors()}, 400
 
 
-async def login_user(user_data: dict) -> dict:
+async def login_user(user_data: dict) -> tuple:
     users_collection = get_users_collection()
     try:
         user_data = UserSchema(**user_data).dict()
@@ -55,20 +56,21 @@ async def login_user(user_data: dict) -> dict:
         return {"detail": e.__str__()}, 400
 
 
-async def update_access_token(data):
+async def update_access_token(data: dict) -> tuple:
     try:
+        refresh_token = JWTSchema(**data).dict()
         refresh_token_data = jwt.decode(
-            data["refresh_token"],
-            key="b37e50cedcd3e3f1ff64f4afc0422084ae694253cf399326868e07a35f4",
+            refresh_token["refresh_token"],
+            key=JWT_SECRET_KEY,
             algorithms=["HS256"],
         )
         current_datetime = datetime.datetime.utcnow()
         if current_datetime > datetime.datetime.fromtimestamp(
             refresh_token_data["exp"]
         ):
-            return {"refresh_token": refresh_token_data}
+            return {"refresh_token": refresh_token_data}, 200
 
         new_access_token = await create_token(refresh_token_data, "access", 10)
         return {"access_token": new_access_token}, 201
-    except InvalidSignatureError as e:
+    except (InvalidSignatureError, ValidationError, jwt.exceptions.DecodeError) as e:
         return {"detail": e.__str__()}, 400

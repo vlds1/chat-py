@@ -1,6 +1,4 @@
-from pydantic import BaseModel
-from pydantic import EmailStr
-from pydantic import Extra
+from pydantic import BaseModel, EmailStr, Extra
 
 
 class UserSchema(BaseModel):
@@ -9,3 +7,7 @@ class UserSchema(BaseModel):
 
     class Config:
         extra = Extra.forbid
+
+
+class JWTSchema(BaseModel):
+    refresh_token: str

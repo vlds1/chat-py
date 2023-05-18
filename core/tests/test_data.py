@@ -1,6 +1,6 @@
 register_test_data = [
     (
-        "xxx@yandex.ru",
+        "xxx1@yandex.ru",
         "passw124ord",
         {"detail": "user has been registered"},
     ),
