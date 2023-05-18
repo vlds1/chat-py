@@ -8,12 +8,12 @@ repos:
         language: system
         types: [ python ]
 
-      - id: isort
-        name: isort
-        entry: isort
-        exclude: (poetry.lock|pyproject.toml)
+      - id: reorder-python-imports
+        name: reorder-python-imports
+        entry: reorder-python-imports
         language: system
         types: [ python ]
+        args: [ --py37-plus ]
 
       - id: flake8
         name: flake8
@@ -21,3 +21,4 @@ repos:
         exclude: (poetry.lock|pyproject.toml)
         language: system
         types: [ python ]
+        args: ['--max-line-length=89']
