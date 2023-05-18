@@ -5,15 +5,18 @@ import jwt
 from jwt import InvalidSignatureError
 from pydantic import ValidationError
 
-from core.database.db import users_collection
+from core.database.db import get_users_collection
 from core.endpoints.services import create_token
 from core.schemas.schemas import UserSchema
 
 
 async def create_new_user(user_data: dict) -> dict:
+    users_collection = get_users_collection()
     try:
         user_data = UserSchema(**user_data).dict()
-        user_exists = users_collection.find_one(filter={"email": user_data["email"]})
+        user_exists = await users_collection.find_one(
+            filter={"email": user_data["email"]}
+        )
 
         if user_exists:
             return {"detail": "user already exists"}, 409
@@ -21,16 +24,19 @@ async def create_new_user(user_data: dict) -> dict:
         user_data["password"] = bcrypt.hashpw(
             password=user_data["password"].encode(), salt=bcrypt.gensalt(rounds=12)
         )
-        users_collection.insert_one(user_data)
+        await users_collection.insert_one(user_data)
         return {"detail": "user has been registered"}, 201
     except ValidationError as e:
         return {"detail": e.errors()}, 400
 
 
 async def login_user(user_data: dict) -> dict:
+    users_collection = get_users_collection()
     try:
         user_data = UserSchema(**user_data).dict()
-        user_exists = users_collection.find_one(filter={"email": user_data["email"]})
+        user_exists = await users_collection.find_one(
+            filter={"email": user_data["email"]}
+        )
         if not user_exists:
             return {"detail": "user doesnt exists"}, 400
         passwords_compare = bcrypt.checkpw(
