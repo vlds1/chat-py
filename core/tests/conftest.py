@@ -1,39 +1,41 @@
 import pytest
 from pymongo.mongo_client import MongoClient
 
-from core.app import app
+from core import create_app
 
 
 @pytest.fixture()
-def test_app():
-    test_app = app
-    test_app.config.update(
+def app():
+    app = create_app(mongo_url="mongodb://localhost:27017", db_name="chat-test")
+    app.config.update(
         {
             "TESTING": True,
         }
     )
-    yield test_app
+    yield app
 
-
-@pytest.fixture()
-def client(test_app):
-    return test_app.test_client()
-
-
-@pytest.fixture()
-def runner(test_app):
-    return test_app.test_cli_runner()
-
-
-@pytest.fixture()
-def get_test_users_collection():
     client = MongoClient("mongodb://localhost:27017/chat-test")
-    database = client.chat
-    users_collection = database.get_collection("users")
-    return users_collection
+    db = client["None"]
+    db.drop_collection("users")
+
+
+@pytest.fixture()
+def client(app):
+    return app.test_client()
+
+
+@pytest.fixture()
+def runner(app):
+    return app.test_cli_runner()
 
 
 @pytest.fixture()
 def user_data():
-    user = {"email": "vlad.sergienko01@yandex.ru", "password": "passw124ord"}
+    user = {"email": "xxx@yandex.ru", "password": "passw124ord"}
     return user
+
+
+@pytest.fixture()
+def registered_user(user_data, client):
+    res = client.post("/api/v1/auth/registration", json=user_data)
+    return res

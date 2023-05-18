@@ -1,6 +1,8 @@
+import os
+
 from pymongo.mongo_client import MongoClient
 
-client = MongoClient("mongodb://localhost:27017/chat")
-database = client.chat
+client = MongoClient(os.environ.get("DB_URL"))
+database = client[str(os.environ.get("DB_NAME"))]
 
 users_collection = database.get_collection("users")

@@ -1,5 +1,4 @@
 import datetime
-import os
 
 import bcrypt
 import jwt
@@ -53,7 +52,7 @@ async def login_user(user_data: dict) -> dict:
 async def update_access_token(data):
     refresh_token_data = jwt.decode(
         data["refresh_token"],
-        key=os.environ.get("JWT_SECRET_KEY"),
+        key="b37e50cedcd3e3f1ff64f4afc0422084ae694253cf399326868e07a35f4",
         algorithms=["HS256"],
     )
     current_datetime = datetime.datetime.utcnow()
