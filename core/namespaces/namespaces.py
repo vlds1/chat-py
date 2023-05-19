@@ -1,3 +1,5 @@
+import uuid
+
 import socketio
 
 from core.services.chat_services import get_room_id
@@ -12,7 +14,7 @@ class DefaultNameSpace(socketio.AsyncNamespace):
 
     async def on_join_room(self, sid: str, data: dict) -> None:
         try:
-            room_id = get_room_id(data)
+            room_id = uuid.uuid4()
             self.enter_room(sid, room_id)
         except Exception as e:
             print(e)
