@@ -1,6 +1,6 @@
 from flask import Blueprint, make_response, request
 
-from core.endpoints.crud import AuthUser
+from core.endpoints.crud import AuthUser, Token
 
 auth = Blueprint(
     "authentication",
@@ -24,6 +24,6 @@ async def login():
 
 @auth.route("/token/refresh", methods=["POST"])
 async def refresh_access_token():
-    user = AuthUser()
-    new_access_token = await user.update_access_token(request.get_json())
+    token = Token()
+    new_access_token = await token.update_access_token(request.get_json())
     return make_response(new_access_token)

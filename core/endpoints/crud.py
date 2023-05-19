@@ -1,54 +1,49 @@
-import datetime
-
 import bcrypt
 import jwt
 from jwt import InvalidSignatureError
 from pydantic import ValidationError
 
-from core.config import JWT_SECRET_KEY
-from core.database.db import get_users_collection
-from core.endpoints.services import create_token
+from core.endpoints.services import (
+    TokenService,
+    UserExtractorService,
+    UserInserterService,
+)
 from core.schemas.schemas import JWTSchema, UserSchema
 
 
 class AuthUser:
     def __init__(self):
-        self.users_collection = get_users_collection()
+        self.user_extractor = UserExtractorService()
+        self.user_inserter = UserInserterService()
 
     async def create_new_user(self, user_data: dict) -> tuple:
         try:
             user_data = UserSchema(**user_data).dict()
-            user_exists = await self.users_collection.find_one(
-                filter={"email": user_data["email"]}
-            )
-
-            if user_exists:
+            user = await self.user_extractor.get_user(user_data)
+            if user:
                 return {"detail": "user already exists"}, 409
 
-            user_data["password"] = bcrypt.hashpw(
-                password=user_data["password"].encode(), salt=bcrypt.gensalt(rounds=12)
-            )
-            await self.users_collection.insert_one(user_data)
+            await self.user_inserter.create_new_user(user_data)
             return {"detail": "user has been registered"}, 201
         except ValidationError as e:
             return {"detail": e.errors()}, 400
 
     async def login_user(self, user_data: dict) -> tuple:
+        token = TokenService()
         try:
             user_data = UserSchema(**user_data).dict()
-            user_exists = await self.users_collection.find_one(
-                filter={"email": user_data["email"]}
-            )
-            if not user_exists:
+            user = await self.user_extractor.get_user(user_data)
+            if not user:
                 return {"detail": "user doesnt exists"}, 400
+
             passwords_compare = bcrypt.checkpw(
-                user_data["password"].encode(), user_exists["password"]
+                user_data["password"].encode(), user["password"]
             )
             if not passwords_compare:
                 raise ValidationError
 
-            access_token = await create_token(user_exists, "access", 10)
-            refresh_token = await create_token(user_exists, "refresh", 24 * 60)
+            access_token = await token.create_token(user, "access", 10)
+            refresh_token = await token.create_token(user, "refresh", 24 * 60)
 
             return {
                 "data": {"access_token": access_token, "refresh_token": refresh_token}
@@ -56,21 +51,21 @@ class AuthUser:
         except ValidationError as e:
             return {"detail": e.__str__()}, 400
 
+
+class Token:
+    def __init__(self):
+        self.token = TokenService()
+
     async def update_access_token(self, refresh_token: dict) -> tuple:
         try:
             refresh_token = JWTSchema(**refresh_token).dict()
-            refresh_token_data = jwt.decode(
-                refresh_token["refresh_token"],
-                key=JWT_SECRET_KEY,
-                algorithms=["HS256"],
-            )
-            current_datetime = datetime.datetime.utcnow()
-            if current_datetime > datetime.datetime.fromtimestamp(
-                refresh_token_data["exp"]
-            ):
-                return {"refresh_token": refresh_token_data}, 200
+            token = await self.token.validate_token(refresh_token)
+            if not token["is_valid"]:
+                return {"err": "token expired"}, 401
 
-            new_access_token = await create_token(refresh_token_data, "access", 10)
+            new_access_token = await self.token.create_token(
+                token["data"], "access", 10
+            )
             return {"access_token": new_access_token}, 201
         except (
             InvalidSignatureError,
