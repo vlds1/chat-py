@@ -22,4 +22,15 @@ class BaseConfig:
         return self
 
 
+class EmailConfig:
+    def __init__(self):
+        load_dotenv()
+        self.sender = os.environ.get("EMAIL_SENDER")
+        self.password = os.environ.get("EMAIL_PASSWORD")
+
+    def get_email_config(self):
+        return self
+
+
+email_config = EmailConfig()
 config = BaseConfig()

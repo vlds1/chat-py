@@ -1,9 +1,12 @@
 import datetime
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 import bcrypt
 import jwt
 
-from core.config import JWT_SECRET_KEY
+from core.config import JWT_SECRET_KEY, email_config
 from core.database.db import get_users_collection
 
 
@@ -57,3 +60,39 @@ class UserInserterService:
         )
         user = await self.users_collection.insert_one(user_data)
         return user
+
+
+class EmailService:
+    def __init__(self):
+        self.email_config = email_config
+
+    async def send_mail(self, message):
+        receiver = message.headers["recipient"]
+        server = await self.get_server()
+        try:
+            msg = await self.set_msg(self.email_config.sender, receiver, message)
+            server.sendmail(self.email_config.sender, receiver, msg.as_string())
+            server.quit()
+        except Exception as e:
+            print(f"err {e.__str__()}")
+
+    async def set_msg(self, sender, receiver, message):
+        msg = MIMEMultipart()
+        user = message.headers["user_id"]
+        message = message.body.decode("utf-8")
+        msg["From"] = f"Chat <{sender}>"
+        msg["To"] = receiver
+        msg["Subject"] = "New message"
+        text = f"New message by {user}: {message}"
+        part = MIMEText(text, "plain")
+        msg.attach(part)
+        return msg
+
+    async def get_server(self):
+        try:
+            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login(self.email_config.sender, self.email_config.password)
+            return server
+        except Exception as e:
+            print(f"err {e.__str__()}")
