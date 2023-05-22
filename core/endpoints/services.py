@@ -3,11 +3,14 @@ import datetime
 import bcrypt
 import jwt
 
-from core.config import JWT_SECRET_KEY
+from core.config import get_config
 from core.database.db import get_users_collection
 
 
 class TokenService:
+    def __init__(self):
+        self.config = get_config()
+
     async def create_token(self, user_data: dict, token_type: str, exp: int) -> str:
         payload = {
             "_id": str(user_data["_id"]),
@@ -17,7 +20,7 @@ class TokenService:
         }
         token = jwt.encode(
             payload=payload,
-            key=JWT_SECRET_KEY,
+            key=self.config.JWT_SECRET_KEY,
             algorithm="HS256",
         )
 
@@ -26,7 +29,7 @@ class TokenService:
     async def validate_token(self, token):
         refresh_token_data = jwt.decode(
             token["refresh_token"],
-            key=JWT_SECRET_KEY,
+            key=self.config.JWT_SECRET_KEY,
             algorithms=["HS256"],
         )
         current_datetime = datetime.datetime.utcnow()
