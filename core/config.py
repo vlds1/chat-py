@@ -8,7 +8,10 @@ dotenv.load_dotenv()
 class AppConfig:
     def __init__(self):
         self.host = os.environ.get("APP_HOST")
-        self.port = int(os.environ.get("APP_PORT"))
+        self.port = os.environ.get("APP_PORT")
 
 
-app_config = AppConfig()
+class RabbitConfig:
+    def __init__(self):
+        self.login = os.environ.get("RABBIT_LOGIN")
+        self.password = os.environ.get("RABBIT_PASSWORD")
