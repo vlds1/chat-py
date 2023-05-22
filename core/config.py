@@ -12,10 +12,10 @@ class DatabaseConfig(BaseSettings):
     class Config:
         env_file = ".env"
 
-    DB_NAME = os.environ.get("DB_NAME")
-    DB_HOST = os.environ.get("DB_HOST")
-    DB_PORT = os.environ.get("DB_PORT")
-    DB_URL = os.environ.get("DB_URL")
+    DB_NAME: str
+    DB_HOST: str
+    DB_PORT: str
+    DB_URL: str
 
 
 def get_config():
