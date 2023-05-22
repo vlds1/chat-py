@@ -22,6 +22,6 @@ def test_refresh_token(client, user_data):
     client.post("/api/v1/auth/registration", json=user_data)
     res = client.post("/api/v1/auth/login", json=user_data)
 
-    refresh_token = res.get_json()["data"]["refresh_token"]
+    refresh_token = res.get_json()["detail"]["refresh_token"]
     client.post("/api/v1/auth/token/refresh", json={"refresh_token": refresh_token})
-    assert "data" in res.get_json()
+    assert "detail" in res.get_json()

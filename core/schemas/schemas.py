@@ -1,12 +1,13 @@
-from pydantic import BaseModel, EmailStr, Extra
+from marshmallow import Schema, fields
+from pydantic import BaseModel
 
 
-class UserSchema(BaseModel):
-    email: EmailStr
-    password: str
+class UserSchema(Schema):
+    email = fields.Email()
+    password = fields.Str()
 
-    class Config:
-        extra = Extra.forbid
+    class Meta:
+        strict = True
 
 
 class JWTSchema(BaseModel):
