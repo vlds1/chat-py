@@ -10,11 +10,11 @@ class DefaultNameSpace(socketio.AsyncNamespace):
 
     async def on_connect(self, sid: str, environ: dict) -> None:
         self.enter_room(sid, self.room_id)
-        print(f'{sid} connected to room: {self.room_id}')
+        print(f"{sid} connected to room: {self.room_id}")
 
     async def on_disconnect(self, sid: str) -> None:
         self.leave_room(sid, self.room_id)
-        print(f'{sid} disconnected from room: {self.room_id}')
+        print(f"{sid} disconnected from room: {self.room_id}")
 
     async def on_message(self, sid: str, data: dict) -> None:
         try:

@@ -1,8 +1,8 @@
 import socketio
 import uvicorn
 from namespaces.namespaces import DefaultNameSpace
-from core.config import app_config
 
+from core.config import app_config
 
 sio = socketio.AsyncServer(async_mode="asgi", logger=True)
 sio.register_namespace(DefaultNameSpace("/"))
