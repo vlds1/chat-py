@@ -67,18 +67,19 @@ class EmailService:
         self.email_config = email_config
 
     async def send_mail(self, message):
-        receiver = message.headers["recipient"]
+        receiver = message.headers["to_user"]
         server = await self.get_server()
         try:
             msg = await self.set_msg(self.email_config.sender, receiver, message)
             server.sendmail(self.email_config.sender, receiver, msg.as_string())
             server.quit()
+            print("message sent")
         except Exception as e:
             print(f"err {e.__str__()}")
 
     async def set_msg(self, sender, receiver, message):
         msg = MIMEMultipart()
-        user = message.headers["user_id"]
+        user = message.headers["from_user"]
         message = message.body.decode("utf-8")
         msg["From"] = f"Chat <{sender}>"
         msg["To"] = receiver
