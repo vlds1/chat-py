@@ -8,13 +8,9 @@ from core.endpoints.services import (
     TokenService,
     UserExtractorService,
     UserInserterService,
+    UserResponse,
 )
 from core.schemas.schemas import JWTSchema, UserSchema
-
-
-class UserResponse:
-    def response(self, detail, status_code):
-        return {"detail": detail}, status_code
 
 
 class AuthUser:
@@ -57,7 +53,7 @@ class AuthUser:
                 {"access_token": access_token, "refresh_token": refresh_token}, 200
             )
         except MarshmallowValidationError as e:
-            return {"detail": e.__str__()}, 400
+            return self.res.response(e.__str__(), 400)
 
 
 class Token:

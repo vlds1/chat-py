@@ -60,3 +60,8 @@ class UserInserterService:
         )
         user = await self.users_collection.insert_one(user_data)
         return user
+
+
+class UserResponse:
+    def response(self, detail, status_code):
+        return {"detail": detail}, status_code
