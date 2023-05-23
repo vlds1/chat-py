@@ -2,7 +2,7 @@ import asyncio
 
 from aio_pika import connect_robust
 
-from core.endpoints.services import EmailService
+from rabbitmq.consumer_service import EmailService
 
 
 async def consume():
