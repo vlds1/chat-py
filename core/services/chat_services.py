@@ -8,7 +8,8 @@ class RabbitService:
 
     async def get_rabbit(self):
         connection = await aio_pika.connect_robust(
-            login=self.rabbit_config.login, password=self.rabbit_config.password
+            login=self.rabbit_config.login,
+            password=self.rabbit_config.password,
         )
         channel = await connection.channel()
         return channel
