@@ -101,3 +101,8 @@ class EmailService:
             return server
         except Exception as e:
             print(f"err {e.__str__()}")
+
+
+class UserResponse:
+    def response(self, detail, status_code):
+        return {"detail": detail}, status_code
