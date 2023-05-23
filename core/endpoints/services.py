@@ -2,9 +2,8 @@ import datetime
 
 import bcrypt
 import jwt
-
-from core.config import get_config
-from core.database.db import get_users_collection
+from config import get_config
+from database.db import get_users_collection
 
 
 class TokenService:

@@ -1,17 +1,16 @@
 import asyncio
 
 from aio_pika import connect_robust
-
-from rabbitmq.consumer_service import EmailService
+from consumer_service import EmailService
 
 
 async def consume():
     email = EmailService()
-    connection = await connect_robust(login="user", password="password")
+    connection = await connect_robust(login="user", password="password", host="rabbit")
     channel = await connection.channel()
 
     queue = await channel.declare_queue("chat-queue", durable=True)
-
+    print("[consumer] connected to rabbit")
     async with queue.iterator() as queue_iter:
         async for message in queue_iter:
             async with message.process():

@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services:
   mongo:
@@ -9,5 +9,21 @@ services:
   flask:
     build:
       context: .
+      target: flask
     ports:
       - "5001:5001"
+    depends_on:
+      - mongo
+
+
+  rabbit:
+    build:
+       context: .
+       target: rabbitmq
+    networks:
+      - rabbit-network
+
+
+networks:
+  rabbit-network:
+    external: true

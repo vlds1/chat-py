@@ -2,7 +2,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-from core.config import get_config
+from config import get_config
 
 
 class EmailService:
@@ -10,9 +10,9 @@ class EmailService:
         self.config = get_config()
 
     async def send_mail(self, message):
+        print("sending message...")
         receiver = message.headers["to_user"]
         server = await self.get_server()
-        print()
         try:
             msg = await self.set_msg(self.config.EMAIL_SENDER, receiver, message)
             server.sendmail(self.config.EMAIL_SENDER, receiver, msg.as_string())

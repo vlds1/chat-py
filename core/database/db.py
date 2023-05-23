@@ -1,6 +1,5 @@
 import motor.motor_asyncio
-
-from core.config import get_config
+from config import get_config
 
 
 def get_users_collection():
