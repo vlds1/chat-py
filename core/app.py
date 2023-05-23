@@ -1,8 +1,6 @@
-from endpoints.endpoints import auth
-from flask import Flask
+from core import create_app
 
-app = Flask(__name__)
-app.register_blueprint(auth, url_prefix="/api/v1")
+app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=5001, debug=True)
