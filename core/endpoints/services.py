@@ -6,11 +6,14 @@ from email.mime.text import MIMEText
 import bcrypt
 import jwt
 
-from core.config import JWT_SECRET_KEY, email_config
+from core.config import get_config
 from core.database.db import get_users_collection
 
 
 class TokenService:
+    def __init__(self):
+        self.config = get_config()
+
     async def create_token(self, user_data: dict, token_type: str, exp: int) -> str:
         payload = {
             "_id": str(user_data["_id"]),
@@ -20,7 +23,7 @@ class TokenService:
         }
         token = jwt.encode(
             payload=payload,
-            key=JWT_SECRET_KEY,
+            key=self.config.JWT_SECRET_KEY,
             algorithm="HS256",
         )
 
@@ -29,7 +32,7 @@ class TokenService:
     async def validate_token(self, token):
         refresh_token_data = jwt.decode(
             token["refresh_token"],
-            key=JWT_SECRET_KEY,
+            key=self.config.JWT_SECRET_KEY,
             algorithms=["HS256"],
         )
         current_datetime = datetime.datetime.utcnow()
@@ -64,14 +67,15 @@ class UserInserterService:
 
 class EmailService:
     def __init__(self):
-        self.email_config = email_config
+        self.config = get_config()
 
     async def send_mail(self, message):
         receiver = message.headers["to_user"]
         server = await self.get_server()
+        print()
         try:
-            msg = await self.set_msg(self.email_config.sender, receiver, message)
-            server.sendmail(self.email_config.sender, receiver, msg.as_string())
+            msg = await self.set_msg(self.config.EMAIL_SENDER, receiver, message)
+            server.sendmail(self.config.EMAIL_SENDER, receiver, msg.as_string())
             server.quit()
             print("message sent")
         except Exception as e:
@@ -93,7 +97,7 @@ class EmailService:
         try:
             server = smtplib.SMTP("smtp.gmail.com", 587)
             server.starttls()
-            server.login(self.email_config.sender, self.email_config.password)
+            server.login(self.config.EMAIL_SENDER, self.config.EMAIL_PASSWORD)
             return server
         except Exception as e:
             print(f"err {e.__str__()}")
