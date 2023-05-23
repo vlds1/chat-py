@@ -60,10 +60,11 @@ class Token:
     def __init__(self):
         self.token = TokenService()
         self.res = UserResponse()
+        self.toke_schema = JWTSchema()
 
     async def update_access_token(self, refresh_token: dict) -> tuple:
         try:
-            refresh_token = JWTSchema(**refresh_token).dict()
+            refresh_token = self.toke_schema.load(refresh_token)
             token = await self.token.validate_token(refresh_token)
             if not token["is_valid"]:
                 return self.res.response("token expired", 401)

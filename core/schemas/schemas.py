@@ -1,5 +1,4 @@
 from marshmallow import Schema, fields
-from pydantic import BaseModel
 
 
 class UserSchema(Schema):
@@ -10,5 +9,8 @@ class UserSchema(Schema):
         strict = True
 
 
-class JWTSchema(BaseModel):
-    refresh_token: str
+class JWTSchema(Schema):
+    refresh_token = fields.Str()
+
+    class Meta:
+        strict = True
