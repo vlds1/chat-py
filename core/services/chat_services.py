@@ -1,10 +1,12 @@
 import aio_pika
 from config import get_config
+from logger.logger_config import console_log
 
 
 class RabbitService:
     def __init__(self):
         self.config = get_config()
+        self.logger = console_log
 
     async def get_rabbit(self):
         connection = await aio_pika.connect_robust(
@@ -24,3 +26,4 @@ class RabbitService:
             ),
             routing_key="chat-queue",
         )
+        self.logger.info("[rabbit_producer] message sent")

@@ -20,6 +20,7 @@ python-dotenv = "^1.0.0"
 pre-commit = "^3.3.2"
 aio-pika = "^9.0.7"
 pydantic = "^1.10.8"
+logging = "^0.4.9.6"
 
 
 [build-system]
