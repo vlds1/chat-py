@@ -3,11 +3,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from config import get_config
+from logger.logger_config import get_logger
 
 
 class EmailService:
     def __init__(self):
         self.config = get_config()
+        self.logger = get_logger()
 
     async def send_mail(self, message):
         receiver = message.headers["to_user"]
@@ -17,7 +19,7 @@ class EmailService:
             server.sendmail(self.config.EMAIL_SENDER, receiver, msg.as_string())
             server.quit()
         except Exception as e:
-            print(f"err {e.__str__()}")
+            self.logger.error(f"[rabbit_consumer: send_message] {e}")
 
     async def set_msg(self, sender, receiver, message):
         msg = MIMEMultipart()
@@ -38,4 +40,4 @@ class EmailService:
             server.login(self.config.EMAIL_SENDER, self.config.EMAIL_PASSWORD)
             return server
         except Exception as e:
-            print(f"err {e.__str__()}")
+            self.logger.error(f"[rabbit_consumer: get_server] {e}")
