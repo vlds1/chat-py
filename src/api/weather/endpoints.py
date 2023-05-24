@@ -11,6 +11,7 @@ routers = APIRouter()
 @routers.get(
     "/weather/{city}",
     response_model=WeatherSchema,
+    name="get_weather",
 )
 async def get_weather(city: str = Path()) -> WeatherSchema:
     variables = {"city": city}

@@ -1,13 +1,20 @@
 version: "3.7"
 
 services:
+  mongodb-test:
+    image: mongo
+    container_name: "mongo_db_test"
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb-test-data:/data/db
+
   mongo_db:
     image: mongo
     container_name: "mongo_db"
     ports:
       - "27017:27017"
-    networks:
-      - custom
+
 
   redis_cash:
     image: 'bitnami/redis:latest'
@@ -19,14 +26,9 @@ services:
     volumes:
       - redis-data:/data
       - redis-conf:/usr/local/etc/redis/redis.conf
-    networks:
-      - custom
 
-
-networks:
-  custom:
-    driver: bridge
 
 volumes:
   redis-data:
   redis-conf:
+  mongodb-test-data:
