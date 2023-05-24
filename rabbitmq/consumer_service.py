@@ -18,6 +18,7 @@ class EmailService:
             msg = await self.set_msg(self.config.EMAIL_SENDER, receiver, message)
             server.sendmail(self.config.EMAIL_SENDER, receiver, msg.as_string())
             server.quit()
+            self.logger.info("[rabbit_consumer] message sent to email successfully")
         except Exception as e:
             self.logger.error(f"[rabbit_consumer: send_message] {e}")
 
@@ -38,6 +39,9 @@ class EmailService:
             server = smtplib.SMTP("smtp.gmail.com", 587)
             server.starttls()
             server.login(self.config.EMAIL_SENDER, self.config.EMAIL_PASSWORD)
+            self.logger.info(
+                "[rabbit_consumer: get_server] successfully connected to SMTP server"
+            )
             return server
         except Exception as e:
             self.logger.error(f"[rabbit_consumer: get_server] {e}")

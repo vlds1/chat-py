@@ -24,7 +24,6 @@ async def consume():
             log.info("[rabbit_consumer] message received")
             async with message.process():
                 await email.send_mail(message=message)
-                log.info("[rabbit_consumer] message sent to email")
 
 
 loop = asyncio.get_event_loop()
