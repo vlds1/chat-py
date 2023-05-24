@@ -12,6 +12,8 @@ services:
       target: flask
     ports:
       - "5001:5001"
+    environment:
+      DB_URL: mongodb://mongo:27017/chat
     depends_on:
       - mongo
 
@@ -20,6 +22,9 @@ services:
     build:
        context: .
        target: rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBIT_HOST: rabbit
     networks:
       - rabbit-network
 
