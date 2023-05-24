@@ -19,14 +19,10 @@ class MongoExtractor:
         document = await self.collection.find_one(
             {"city": city}, {"_id": 0}, sort=[("_id", -1)], limit=1
         )
-        data = await redis_get_or_set(key=city, data=document)
-        return data
+        return await redis_get_or_set(key=city, data=document)
 
     async def get_many(self, schema: ModelMetaclass) -> list:
-        documents = []
-        async for doc in self.collection.find():
-            documents.append(schema(**doc))
-        return documents
+        return [schema(**doc) async for doc in self.collection.find()]
 
 
 class MongoWriter:
