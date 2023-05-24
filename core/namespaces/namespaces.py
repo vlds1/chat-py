@@ -26,5 +26,6 @@ class DefaultNameSpace(socketio.AsyncNamespace):
 
             await self.emit("message", message, room=self.room_id, skip_sid=sid)
             await self.rabbit.send_message(message, from_user, to_user)
+            print("[on_message] message sent")
         except Exception as e:
             print("on message", e)

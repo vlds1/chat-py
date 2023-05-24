@@ -1,17 +1,20 @@
-import os
-
 import dotenv
-
-dotenv.load_dotenv()
-
-
-class AppConfig:
-    def __init__(self):
-        self.host = os.environ.get("APP_HOST")
-        self.port = os.environ.get("APP_PORT")
+from pydantic import BaseSettings
 
 
-class RabbitConfig:
-    def __init__(self):
-        self.login = os.environ.get("RABBIT_LOGIN")
-        self.password = os.environ.get("RABBIT_PASSWORD")
+class AppConfig(BaseSettings):
+    class Config:
+        env_file = ".env"
+
+    APP_HOST: str
+    APP_PORT: str
+
+    RABBIT_LOGIN: str
+    RABBIT_PASSWORD: str
+    RABBIT_HOST: str
+
+
+def get_config():
+    dotenv.load_dotenv()
+    _config = AppConfig()
+    return _config

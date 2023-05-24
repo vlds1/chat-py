@@ -6,8 +6,8 @@ services:
     image: "rabbitmq:3-management"
     hostname: rabbit
     environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASS=password
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
     ports:
       - "15672:15672"
       - "5672:5672"
@@ -20,6 +20,8 @@ services:
     container_name: 'websockets_chat'
     ports:
       - "8080:8080"
+    environment:
+      RABBIT_HOST: rabbit
     links:
       - 'rabbit'
     depends_on:

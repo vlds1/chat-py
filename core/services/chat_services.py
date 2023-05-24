@@ -1,15 +1,21 @@
 import aio_pika
-from config import RabbitConfig
+from config import get_config
 
 
 class RabbitService:
     def __init__(self):
-        self.rabbit_config = RabbitConfig()
+        self.config = get_config()
 
     async def get_rabbit(self):
+        print(
+            self.config.RABBIT_LOGIN,
+            self.config.RABBIT_PASSWORD,
+            self.config.RABBIT_HOST,
+        )
         connection = await aio_pika.connect_robust(
-            login=self.rabbit_config.login,
-            password=self.rabbit_config.password,
+            login=self.config.RABBIT_LOGIN,
+            password=self.config.RABBIT_PASSWORD,
+            host=self.config.RABBIT_HOST,
         )
         channel = await connection.channel()
         return channel
@@ -23,3 +29,4 @@ class RabbitService:
             ),
             routing_key="chat-queue",
         )
+        print("message sent")
