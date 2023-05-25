@@ -13,6 +13,9 @@ class AppConfig(BaseSettings):
     RABBIT_PASSWORD: str
     RABBIT_HOST: str
 
+    CHAT_ROUTING_KEY: str
+    COMMAND_ROUTING_KEY: str
+
 
 def get_config():
     dotenv.load_dotenv()
