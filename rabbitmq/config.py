@@ -6,12 +6,9 @@ class Config(BaseSettings):
     class Config:
         env_file = ".env"
 
-    DB_NAME: str
-    DB_HOST: str
-    DB_PORT: str
-    DB_URL: str
-
-    JWT_SECRET_KEY: str
+    RABBIT_LOGIN: str
+    RABBIT_PASSWORD: str
+    RABBIT_HOST: str
 
     EMAIL_SENDER: str
     EMAIL_PASSWORD: str

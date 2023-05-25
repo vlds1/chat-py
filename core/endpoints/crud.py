@@ -1,16 +1,15 @@
 import bcrypt
 import jwt
-from jwt import InvalidSignatureError
-from marshmallow.exceptions import ValidationError as MarshmallowValidationError
-from pydantic import ValidationError
-
-from core.endpoints.services import (
+from endpoints.services import (
     TokenService,
     UserExtractorService,
     UserInserterService,
     UserResponse,
 )
-from core.schemas.schemas import JWTSchema, UserSchema
+from jwt import InvalidSignatureError
+from marshmallow.exceptions import ValidationError as MarshmallowValidationError
+from pydantic import ValidationError
+from schemas.schemas import JWTSchema, UserSchema
 
 
 class AuthUser:

@@ -2,9 +2,8 @@ import datetime
 
 import bcrypt
 import jwt
-
-from core.config import get_config
-from core.database.db import get_users_collection
+from config import get_config
+from database.db import get_users_collection
 
 
 class TokenService:
@@ -26,7 +25,7 @@ class TokenService:
 
         return token
 
-    async def validate_token(self, token):
+    async def validate_token(self, token: dict) -> dict:
         refresh_token_data = jwt.decode(
             token["refresh_token"],
             key=self.config.JWT_SECRET_KEY,
@@ -43,7 +42,7 @@ class UserExtractorService:
     def __init__(self):
         self.users_collection = get_users_collection()
 
-    async def get_user(self, user_data):
+    async def get_user(self, user_data: dict) -> dict:
         user = await self.users_collection.find_one(
             filter={"email": user_data["email"]}
         )
@@ -54,7 +53,7 @@ class UserInserterService:
     def __init__(self):
         self.users_collection = get_users_collection()
 
-    async def create_new_user(self, user_data):
+    async def create_new_user(self, user_data: dict) -> dict:
         user_data["password"] = bcrypt.hashpw(
             password=user_data["password"].encode(), salt=bcrypt.gensalt(rounds=12)
         )
@@ -63,5 +62,5 @@ class UserInserterService:
 
 
 class UserResponse:
-    def response(self, detail, status_code):
+    def response(self, detail: str, status_code: int) -> tuple:
         return {"detail": detail}, status_code

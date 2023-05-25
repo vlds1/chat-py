@@ -1,7 +1,34 @@
-version: "3"
+version: "3.8"
 
 services:
   mongo:
     image: mongo:latest
     ports:
       - "27017:27017"
+
+  flask:
+    build:
+      context: .
+      target: flask
+    ports:
+      - "5001:5001"
+    environment:
+      DB_URL: mongodb://mongo:27017/chat
+    depends_on:
+      - mongo
+
+
+  rabbit:
+    build:
+       context: .
+       target: rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBIT_HOST: rabbit
+    networks:
+      - rabbit-network
+
+
+networks:
+  rabbit-network:
+    external: true

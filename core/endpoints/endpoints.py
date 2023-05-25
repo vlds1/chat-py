@@ -1,6 +1,5 @@
+from endpoints.crud import AuthUser, Token
 from flask import Blueprint, make_response, request
-
-from core.endpoints.crud import AuthUser, Token
 
 auth = Blueprint(
     "authentication",
