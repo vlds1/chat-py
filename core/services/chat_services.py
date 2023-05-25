@@ -1,4 +1,5 @@
 import aio_pika
+from aio_pika.abc import AbstractChannel
 from config import get_config
 from logger.logger_config import console_log
 
@@ -8,7 +9,7 @@ class RabbitService:
         self.config = get_config()
         self.logger = console_log
 
-    async def get_rabbit(self):
+    async def get_rabbit(self) -> AbstractChannel:
         connection = await aio_pika.connect_robust(
             login=self.config.RABBIT_LOGIN,
             password=self.config.RABBIT_PASSWORD,
@@ -17,7 +18,7 @@ class RabbitService:
         channel = await connection.channel()
         return channel
 
-    async def send_message(self, message, from_user, to_user):
+    async def send_message(self, message: str, from_user: str, to_user: str) -> None:
         rabbit_channel = await self.get_rabbit()
         await rabbit_channel.default_exchange.publish(
             aio_pika.Message(
