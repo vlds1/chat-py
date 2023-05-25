@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+  rabbit:
+    container_name: 'rabbit_mq'
+    image: "rabbitmq:3-management"
+    hostname: rabbit
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - rabbit-network
+
+  websockets:
+    build:
+      context: .
+    container_name: 'websockets_chat'
+    ports:
+      - "8080:8080"
+    environment:
+      RABBIT_HOST: rabbit
+    links:
+      - 'rabbit'
+    depends_on:
+      - rabbit
+    networks:
+      - rabbit-network
+
+networks:
+  rabbit-network:
+    external: true
