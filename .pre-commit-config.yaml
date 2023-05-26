@@ -18,7 +18,7 @@ repos:
       - id: flake8
         name: flake8
         entry: flake8
-        exclude: (poetry.lock|pyproject.toml)
+        exclude: (poetry.lock|pyproject.toml|weather_commands_pb2|weather_commands_pb2_grpc)
         language: system
         types: [ python ]
         args: ['--max-line-length=89']
