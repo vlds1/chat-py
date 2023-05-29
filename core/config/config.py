@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     RABBIT_LOGIN: str
     RABBIT_PASSWORD: str
     RABBIT_HOST: str
+    GRPC_HOST: str
 
 
 def get_config():

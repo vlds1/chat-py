@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  grpc_client:
+    build:
+      context: .
+      target: client
+    networks:
+      - rabbit-network
+      - grpc-network
+    environment:
+      RABBIT_HOST: rabbit
+      GRPC_HOST: grpc_server
+
+  grpc_server:
+    build:
+      context: .
+      target: server
+    networks:
+      - rabbit-network
+      - grpc-network
+    hostname: grpc_server
+    ports:
+      - "50051:50051"
+    environment:
+      RABBIT_HOST: rabbit
+      GRPC_HOST: grpc_server
+
+networks:
+  rabbit-network:
+    external: true
+  grpc-network:
+    driver: bridge
