@@ -29,12 +29,22 @@ class DefaultNameSpace(socketio.AsyncNamespace):
             message = message_data.message
             from_user = message_data.from_user
             to_user = message_data.to_user
-
             match message.startswith("/"):
                 case True:
                     await self.rabbit.send_message(
-                        message, from_user, to_user, self.config.COMMAND_ROUTING_KEY
+                        message,
+                        from_user,
+                        to_user,
+                        self.config.COMMAND_ROUTING_KEY,
+                        sender_sid=sid,
                     )
+                    async for message in self.rabbit.consume():
+                        self.logger.info("[rabbit_consumer_ws] message received")
+                        await self.emit(
+                            "message",
+                            message.body.decode("utf-8"),
+                            room=message.headers["sender_sid"],
+                        )
                 case False:
                     await self.emit("message", message, room=self.room_id, skip_sid=sid)
                     await self.rabbit.send_message(

@@ -21,7 +21,12 @@ class RabbitService:
             self.logger.error(f"[rabbit] get server error: {e}")
 
     async def send_message(
-        self, message: str, from_user: str, to_user: str, routing_key: str
+        self,
+        message: str,
+        from_user: str,
+        to_user: str,
+        routing_key: str,
+        sender_sid: str,
     ) -> None:
         try:
             rabbit_connection = await self.get_rabbit()
@@ -29,7 +34,11 @@ class RabbitService:
             await rabbit_channel.default_exchange.publish(
                 aio_pika.Message(
                     body=message.encode(),
-                    headers={"from_user": from_user, "to_user": to_user},
+                    headers={
+                        "from_user": from_user,
+                        "to_user": to_user,
+                        "sender_sid": sender_sid,
+                    },
                 ),
                 routing_key=routing_key,
             )
@@ -37,3 +46,13 @@ class RabbitService:
             self.logger.info(f"[rabbit_producer] message sent to {routing_key}")
         except Exception as e:
             self.logger.error(f"[rabbit] send message error: {e}")
+
+    async def consume(self):
+        connection = await self.get_rabbit()
+        channel = await connection.channel()
+        queue = await channel.declare_queue("command_res-queue", durable=True)
+
+        async with queue.iterator() as queue_iter:
+            async for message in queue_iter:
+                yield message
+                await message.ack()
