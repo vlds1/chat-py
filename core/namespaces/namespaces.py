@@ -32,10 +32,10 @@ class DefaultNameSpace(socketio.AsyncNamespace):
             match message.startswith("/"):
                 case True:
                     await self.rabbit.send_message(
-                        message,
-                        from_user,
-                        to_user,
-                        self.config.COMMAND_ROUTING_KEY,
+                        message=message,
+                        from_user=from_user,
+                        to_user=to_user,
+                        routing_key=self.config.COMMAND_ROUTING_KEY,
                         sender_sid=sid,
                     )
                     async for message in self.rabbit.consume():
@@ -48,7 +48,11 @@ class DefaultNameSpace(socketio.AsyncNamespace):
                 case False:
                     await self.emit("message", message, room=self.room_id, skip_sid=sid)
                     await self.rabbit.send_message(
-                        message, from_user, to_user, self.config.CHAT_ROUTING_KEY
+                        message=message,
+                        from_user=from_user,
+                        to_user=to_user,
+                        routing_key=self.config.CHAT_ROUTING_KEY,
+                        sender_sid=sid,
                     )
         except Exception as e:
             self.logger.error(f"[on_message] {e}")
