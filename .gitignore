@@ -2,3 +2,4 @@
 __pycache__/
 config/__pycache__/
 
+weather_commands_pb2.pyi
