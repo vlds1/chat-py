@@ -40,7 +40,8 @@ class Settings(BaseSettings):
     kafka_bootstrap_servers: str
     kafka_consumer_group: str
 
-    redis_url: str
+    redis_cache_url: str
+    redis_limiter_url: str
     redis_ttl: int = 10
     graphql_url: str
 

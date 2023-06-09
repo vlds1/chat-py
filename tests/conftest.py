@@ -1,54 +1,34 @@
-import asyncio
-
-import pytest
-from fastapi import FastAPI
-from httpx import AsyncClient
-from pymongo import MongoClient
-
-from src.api import routers
-from src.main import settings
-
-policy = asyncio.WindowsSelectorEventLoopPolicy()
-asyncio.set_event_loop_policy(policy)
-
-
-@pytest.fixture
-def test_app():
-    test_app = FastAPI()
-    test_app.include_router(routers, prefix=settings.api_prefix)
-    return test_app
-
-
-# @pytest.fixture
-# def client():
-#     with TestClient(test_app) as client:
-#         yield client
-
-
-# @pytest.fixture
-# async def async_client(test_app):
-#     async with TestClient(application=test_app) as ac:
-#         yield ac
-
-
-@pytest.fixture
-async def async_client(test_app):
-    async with AsyncClient(app=test_app, trust_env=True, verify=False) as ac:
-        yield ac
-
-
-# @pytest_asyncio.fixture
-# async def async_client():
-#     test_app: FastAPI = get_application()
-#     async with AsyncClient(app=test_app) as ac:
-#         yield ac
-
-
-@pytest.fixture
-def mongo_client():
-    client = MongoClient("mongodb://localhost:27018/")
-    client.server_info()
-    test_db = client["test_database"]
-    yield client, test_db
-    client.drop_database("test_database")
-    client.close()
+# import asyncio
+#
+# import pytest
+# from fastapi import FastAPI
+# from fastapi.testclient import TestClient
+# from fastapi_limiter import FastAPILimiter
+# from motor.motor_asyncio import AsyncIOMotorClient
+#
+# from src.core.redis_tools.tools import get_redis_client
+# from src.core.settings.mongodb import get_mongo_client
+# from src.api import routers
+# from src.main import settings, app
+#
+#
+# policy = asyncio.WindowsSelectorEventLoopPolicy()
+# asyncio.set_event_loop_policy(policy)
+# redis = get_redis_client()
+#
+#
+# def get_test_mongo_client():
+#     return AsyncIOMotorClient('mongodb://localhost:27017')
+#
+# def override_get_mongo_client():
+#     return get_test_mongo_client
+#
+# app.dependency_overrides[get_mongo_client] = override_get_mongo_client
+#
+# # Initialize FastAPILimiter
+# asyncio.run(FastAPILimiter.init(redis))
+#
+# @pytest.fixture(scope="session")
+# def test_client():
+#     with TestClient(app) as test_client:
+#         yield test_client

@@ -17,7 +17,7 @@ services:
 
 
   redis_cash:
-    image: 'bitnami/redis:latest'
+    image: 'bitnami/redis:6.2.12'
     container_name: "redis_cash"
     environment:
       - ALLOW_EMPTY_PASSWORD=yes

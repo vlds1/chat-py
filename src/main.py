@@ -1,3 +1,4 @@
+import asyncio
 import sys
 from pathlib import Path
 
@@ -13,7 +14,7 @@ from src.api import routers
 from src.api.routers import graphql_routes
 from src.api.weather.consumer import Consumer
 from src.core import get_settings
-from src.core.redis_tools.tools import redis_client
+from src.core.redis_tools.tools import redis_cache
 from src.core.settings.mongodb import get_mongo_client
 from src.core.settings.mongodb import weather_data_collection
 
@@ -22,6 +23,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 settings = get_settings()
 db_client = get_mongo_client()
+consumer = Consumer(collection=weather_data_collection)
 
 
 def get_application() -> "FastAPI":
@@ -47,12 +49,11 @@ app = get_application()
 
 @app.on_event("startup")
 async def startup_event():
-    FastAPICache.init(RedisBackend(redis_client), prefix="fastapi-cache")
+    FastAPICache.init(RedisBackend(redis_cache), prefix="fastapi-cache")
     app.state.db_client = db_client
-    consumer = Consumer(collection=weather_data_collection)
 
-    await consumer.consume()
-    await FastAPILimiter.init(redis_client)
+    await FastAPILimiter.init(redis_cache)
+    asyncio.create_task(consumer.consume())
 
 
 def main():
