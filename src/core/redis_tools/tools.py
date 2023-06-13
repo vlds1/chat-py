@@ -8,9 +8,6 @@ from src.core.settings import settings
 redis_cache = aioredis.from_url(
     settings.redis_cache_url, encoding="utf-8", decode_responses=True
 )
-redis_limiter = aioredis.from_url(
-    settings.redis_limiter_url, encoding="utf-8", decode_responses=True
-)
 
 
 async def redis_get_or_set(key: str, data: dict) -> dict:

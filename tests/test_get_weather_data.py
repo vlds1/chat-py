@@ -1,8 +1,4 @@
-from starlette import status
-
-
-def test_get_weather_data(test_client):
+def test_get_weather_data(client):
     city = "Rostov-on-Don"
-    response = test_client.get(f"/api/weather/{city}")
-    print(response.json())
-    assert response.status_code == status.HTTP_200_OK
+    response = client.get(f"/api/weather/{city}")
+    assert response.status_code == 200
