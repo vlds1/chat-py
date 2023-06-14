@@ -1,24 +1,11 @@
-import asyncio
-
 import aiohttp
-from aiokafka import AIOKafkaConsumer
-
-from src.core.settings import settings
-
-
-async def get_consumer() -> AIOKafkaConsumer:
-    loop = asyncio.get_event_loop()
-    consumer = AIOKafkaConsumer(
-        settings.kafka_topic,
-        loop=loop,
-        bootstrap_servers=settings.kafka_bootstrap_servers,
-        group_id=settings.kafka_consumer_group,
-    )
-    return consumer
+from fastapi import Depends
+from src.dependencies import get_settings
 
 
 async def get_weather_data(query: str, variables: dict[str, str]) -> dict:
     async with aiohttp.ClientSession() as session:
+        settings = await get_settings()
         payload = {"query": query, "variables": variables}
         async with session.post(
             url=settings.graphql_url, json=payload

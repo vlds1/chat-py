@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi import Path
 
 from src.api.query_schemas.queries import weather_query
-from src.api.weather.schemas import WeatherSchema
+from src.api.types import WeatherSchema
 from src.api.weather.utils import get_weather_data
 
 routers = APIRouter()

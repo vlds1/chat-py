@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     app_slug: str
 
     debug: bool | None
+    
+    mongodb_url: str
 
     uvicorn: UvicornSettings = UvicornSettings()
 
@@ -44,12 +46,3 @@ class Settings(BaseSettings):
     redis_limiter_url: str
     redis_ttl: int = 10
     graphql_url: str
-
-
-def get_settings() -> Settings:
-    """Получение и кэширование настроек проекта."""
-    _settings = Settings()
-    return _settings
-
-
-settings = get_settings()

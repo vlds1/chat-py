@@ -1,14 +1,15 @@
-from pydantic import BaseModel
-from pydantic import PositiveFloat
+from ariadne import make_executable_schema
+from ariadne import load_schema_from_path, make_executable_schema
+
+from src.api.weather.resolvers import *
+from src.api.weather.context_types import query
 
 
-class WeatherSchema(BaseModel):
-    city: str
-    current_temperature: PositiveFloat
-    current_weather: str
-    current_wind_speed: PositiveFloat
-    current_humidity: int
-    sunrise: str
-    sunset: str
-    day_duration: str
-    request_time: str
+
+type_defs = load_schema_from_path("src/api/query_schemas/schema.graphql")
+
+
+graphql_schema = make_executable_schema(
+    type_defs,
+    query,
+)

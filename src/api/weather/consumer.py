@@ -1,7 +1,9 @@
+import asyncio
+from aiokafka import AIOKafkaConsumer
 from fastapi import APIRouter
+from src.core.settings.settings import Settings
 
 from src.api.weather.crud import MongoWriter
-from src.api.weather.utils import get_consumer
 from src.api.weather.utils import string_decoder
 
 routers = APIRouter()
@@ -12,12 +14,17 @@ class Consumer:
     Allows to consume data from Kafka container
     """
 
-    def __init__(self, collection):
+    def __init__(self, collection, settings: Settings):
         self.db = MongoWriter(collection=collection)
-        self.consumer = None
+        self.consumer: AIOKafkaConsumer = AIOKafkaConsumer(
+            settings.kafka_topic,
+            loop=asyncio.get_event_loop(),
+            bootstrap_servers=settings.kafka_bootstrap_servers,
+            group_id=settings.kafka_consumer_group,
+        )
+
 
     async def start_consumer(self):
-        self.consumer = await get_consumer()
         await self.consumer.start()
 
     async def stop_consumer(self):
