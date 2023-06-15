@@ -1,5 +1,5 @@
 import pytest
-
+import mongomock
 from async_asgi_testclient import TestClient
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -16,6 +16,7 @@ async def settings():
     return Settings(
         mongodb_url="mongodb://localhost:27018",
     )
+
 
 @pytest.fixture
 def test_app(settings: Settings):
@@ -38,23 +39,28 @@ def get_test_mongo_client():
     return AsyncIOMotorClient("mongodb://localhost:27018")
 
 
-# async def start_application():
-#     redis = await get_redis_client()
-#     FastAPICache.init(RedisBackend(), prefix="fastapi-cache")
-#     app.state.db_client = db_client
-
-#     asyncio.get_event_loop().run_until_complete(consumer.consume())
-#     asyncio.get_event_loop().run_until_complete(
-#         FastAPILimiter.init(redis_cache)
-#     )
+@pytest.fixture(scope="function")
+def mock_db():
+    mock_client = mongomock.MongoClient()
+    db = mock_client.db
+    yield db
+    mock_client.close()
 
 
-# def stop_application():
-#     asyncio.create_task(consumer.stop_consumer())
-
-
-# @pytest.fixture(autouse=True)
-# def setup_and_teardown():
-#     start_application()
-#     yield
-#     stop_application()
+@pytest.fixture
+def moscow_weather_preset():
+    return {
+        "data": {
+            "CityWeather": {
+                "city": "Moscow",
+                "current_temperature": 24.24,
+                "current_humidity": 28,
+                "current_weather": "clear",
+                "current_wind_speed": 3.33,
+                "sunrise": "03:44:40",
+                "sunset": "21:15:16",
+                "day_duration": "17:30:36",
+                "request_time": "12:34:25",
+            }
+        }
+    }
