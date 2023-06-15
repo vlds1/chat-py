@@ -2,13 +2,9 @@ import pytest
 import mongomock
 from async_asgi_testclient import TestClient
 from fastapi import FastAPI
-from motor.motor_asyncio import AsyncIOMotorClient
 
 from src.core.settings.settings import Settings
 from src.main import get_application
-
-# policy = asyncio.WindowsSelectorEventLoopPolicy()
-# asyncio.set_event_loop_policy(policy)
 
 
 @pytest.fixture
@@ -20,23 +16,13 @@ async def settings():
 
 @pytest.fixture
 def test_app(settings: Settings):
-    return get_application(settings=settings)
+    return get_application(settings=settings, init_extras=False)
 
 
 @pytest.fixture
 async def test_client(test_app: FastAPI):
     async with TestClient(test_app) as client:
         yield client
-
-
-@pytest.fixture
-def db(settings: Settings):
-    client = AsyncIOMotorClient(settings.mongodb_url)
-    yield client["test_db"]
-
-
-def get_test_mongo_client():
-    return AsyncIOMotorClient("mongodb://localhost:27018")
 
 
 @pytest.fixture(scope="function")

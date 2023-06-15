@@ -19,20 +19,39 @@ from src.dependencies import get_settings
 sys.path.append(str(Path(__file__).parent.parent))
 
 
-def get_application(settings: Settings) -> "FastAPI":
+def get_application(settings: Settings, init_extras: bool = True) -> "FastAPI":
     """Get FastAPI app"""
+
+    dependencies = []
+    if init_extras:
+        dependencies.append(Depends(RateLimiter(times=5, seconds=10)))
 
     app = FastAPI(
         title=settings.project_name,
         root_path=settings.root_path,
         version=settings.app_version,
         routes=graphql_routes,
-        dependencies=[
-            Depends(RateLimiter(times=5, seconds=10)),
-        ],
     )
 
     app.include_router(routers, prefix=settings.api_prefix)
+
+    if init_extras:
+
+        @app.on_event("startup")
+        async def startup_event():
+            redis = aioredis.from_url(
+                settings.redis_cache_url,
+                encoding="utf-8",
+                decode_responses=True,
+            )
+            collection = AsyncIOMotorClient(
+                settings.mongodb_url
+            ).weather_app.get_collection("weather_data")
+            consumer = Consumer(collection, settings=settings)
+            asyncio.create_task(consumer.consume())
+            FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+            asyncio.create_task(FastAPILimiter.init(redis))
+
     return app
 
 
@@ -44,19 +63,19 @@ def main(settings: Settings = Depends(get_settings)):
     uvicorn.run(**settings.uvicorn.dict())
 
 
-@app.on_event("startup")
-async def startup_event():
-    redis = aioredis.from_url(
-        settings.redis_cache_url, encoding="utf-8", decode_responses=True
-    )
-    collection = AsyncIOMotorClient(
-        settings.mongodb_url
-    ).weather_app.get_collection("weather_data")
-    consumer = Consumer(collection, settings=settings)
-    asyncio.create_task(consumer.consume())
-    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
-    await FastAPILimiter.init(redis)
-
-
 if __name__ == "__main__":
     main()
+
+
+# @app.on_event("startup")
+# async def startup_event():
+#     redis = aioredis.from_url(
+#         settings.redis_cache_url, encoding="utf-8", decode_responses=True
+#     )
+#     collection = AsyncIOMotorClient(
+#         settings.mongodb_url
+#     ).weather_app.get_collection("weather_data")
+#     consumer = Consumer(collection, settings=settings)
+#     asyncio.create_task(consumer.consume())
+#     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+#     await FastAPILimiter.init(redis)

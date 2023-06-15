@@ -216,7 +216,7 @@ async def test_weather_resolver_post_request(
 
 
 @pytest.mark.asyncio
-async def test_bweather_resolver(
+async def test_weather_resolver_mongodb(
     test_client: TestClient,
     mock_db: unittest.mock.Mock,
     moscow_weather_preset: dict,
@@ -224,8 +224,8 @@ async def test_bweather_resolver(
     variables = {"city": "Moscow"}
     payload = {"query": weather_query, "variables": variables}
 
-    mock_db.collection.insert_one(moscow_weather_preset)
     response = await test_client.post("/graphql/", json=payload)
+    mock_db.collection.insert_one(response.json())
 
     assert mock_db.collection.find_one()["data"] == response.json()["data"]
     assert response.status_code == status.HTTP_200_OK
