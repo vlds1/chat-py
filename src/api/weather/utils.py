@@ -17,11 +17,21 @@ async def get_consumer() -> AIOKafkaConsumer:
     return consumer
 
 
-async def make_graphql_request(query: str, variables: dict) -> dict:
+async def get_weather_data(query: str, variables: dict[str, str]) -> dict:
     async with aiohttp.ClientSession() as session:
-        payload = dict({"query": query, "variables": variables})
-        print(payload)
+        payload = {"query": query, "variables": variables}
         async with session.post(
             url=settings.graphql_url, json=payload
         ) as response:
             return await response.json()
+
+
+async def string_decoder(data_string: str) -> dict:
+    data_dict = dict()
+    pairs = data_string.split()
+    for pair in pairs:
+        if "=" in pair:
+            key, value = pair.split("=")
+            value = value.strip('"')
+            data_dict[key] = value
+    return data_dict

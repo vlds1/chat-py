@@ -13,4 +13,4 @@ class Cities(Enum):
     PARIS = "Paris"
 
 
-cities = EnumType(Cities, "Cities")
+cities = EnumType("Cities", Cities)

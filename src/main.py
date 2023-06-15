@@ -2,16 +2,20 @@ import sys
 from pathlib import Path
 
 import uvicorn
+from fastapi import Depends
 from fastapi import FastAPI
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
 
 from src.api import routers
 from src.api.routers import graphql_routes
+from src.api.weather.consumer import Consumer
 from src.core import get_settings
 from src.core.redis_tools.tools import redis_client
 from src.core.settings.mongodb import get_mongo_client
-from src.migrations import run_migrations
+from src.core.settings.mongodb import weather_data_collection
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -27,8 +31,11 @@ def get_application() -> "FastAPI":
         title=settings.project_name,
         root_path=settings.root_path,
         version=settings.app_version,
-        debug=settings.debug,
+        debug=True,
         routes=graphql_routes,
+        dependencies=[
+            Depends(RateLimiter(times=5, seconds=10)),
+        ],
     )
 
     app.include_router(routers, prefix=settings.api_prefix)
@@ -42,10 +49,13 @@ app = get_application()
 async def startup_event():
     FastAPICache.init(RedisBackend(redis_client), prefix="fastapi-cache")
     app.state.db_client = db_client
+    consumer = Consumer(collection=weather_data_collection)
+
+    await consumer.consume()
+    await FastAPILimiter.init(redis_client)
 
 
 def main():
-    run_migrations(db_url=str(settings.sqlalchemy.url))
     uvicorn.run(**settings.uvicorn.dict())
 
 

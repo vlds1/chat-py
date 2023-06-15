@@ -1,18 +1,9 @@
-import typing
-from functools import lru_cache
-
 from pydantic import BaseSettings
 from pydantic import Field
 from uvicorn.config import HTTPProtocolType
 from uvicorn.config import LoopSetupType
 
 from src.core.settings.base import _BaseModel
-
-
-class SqlAlchemySettings(_BaseModel):
-    """SQLAlchemy settings"""
-
-    url: str = None
 
 
 class UvicornSettings(_BaseModel):
@@ -25,20 +16,6 @@ class UvicornSettings(_BaseModel):
     http: HTTPProtocolType = "auto"
     reload: bool = Field(default=None, description="Enable auto-reload.")
     workers: int | None = None
-
-
-class DatabaseSettings(_BaseModel):
-    """Database Settings"""
-
-    echo: bool = False
-
-    url: typing.Any
-
-    pool_size: int = 1
-    max_overflow: int = 5
-    pool_timeout: int = 30
-    pool_recycle: int = -1
-    pool_pre_ping: bool = False
 
 
 class Settings(BaseSettings):
@@ -57,9 +34,7 @@ class Settings(BaseSettings):
 
     debug: bool | None
 
-    postgres: DatabaseSettings = DatabaseSettings()
     uvicorn: UvicornSettings = UvicornSettings()
-    sqlalchemy: SqlAlchemySettings = SqlAlchemySettings()
 
     kafka_topic: str
     kafka_bootstrap_servers: str
@@ -70,7 +45,6 @@ class Settings(BaseSettings):
     graphql_url: str
 
 
-@lru_cache
 def get_settings() -> Settings:
     """Получение и кэширование настроек проекта."""
     _settings = Settings()
