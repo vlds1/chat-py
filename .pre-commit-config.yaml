@@ -33,6 +33,6 @@ repos:
     hooks:
     -   id: mypy
         exclude: ^migrations/
-        files: ^user_service/, ^user_app/,
+        files: ^src/
         additional_dependencies: ['types-requests']
         args: ["--ignore-missing-imports", "--no-namespace-packages"]
