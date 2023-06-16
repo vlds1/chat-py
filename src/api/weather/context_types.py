@@ -1,6 +1,6 @@
 from typing import Protocol, Any, Callable
 from ariadne import ObjectType
-from pydantic import BaseModel, PositiveFloat
+import ariadne
 from pydantic.dataclasses import dataclass
 from graphql import GraphQLResolveInfo as _GraphQLResolveInfo
 
@@ -24,4 +24,4 @@ class DependencyOverrideProvider(Protocol):
     dependency_overrides: dict[Callable[..., Any], Callable[..., Any]]
 
 
-query = ObjectType("WeatherQuerySchema")
+query: ariadne.ObjectType = ObjectType("WeatherQuerySchema")

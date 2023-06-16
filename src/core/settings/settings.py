@@ -26,14 +26,11 @@ class Settings(BaseSettings):
         env_nested_delimiter = "__"
 
     api_prefix: str = ""
-    root_path: str = ""
-    app_version: str = "latest"
 
-    project_name: str
-    app_slug: str
+    project_name: str = "weather-app"
 
     debug: bool | None
-    
+
     mongodb_url: str
 
     uvicorn: UvicornSettings = UvicornSettings()
@@ -43,6 +40,5 @@ class Settings(BaseSettings):
     kafka_consumer_group: str
 
     redis_cache_url: str
-    redis_limiter_url: str
     redis_ttl: int = 10
     graphql_url: str

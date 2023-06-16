@@ -10,11 +10,12 @@ from fastapi import FastAPI
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from motor.motor_asyncio import AsyncIOMotorClient
-from src.api.weather.consumer import Consumer
 
-from src.api.routers import routers, graphql_routes
+from src.api.weather.consumer import Consumer
+from src.api.routers import routers
 from src.core.settings.settings import Settings
 from src.dependencies import get_settings
+from src.api.weather.graphql_utils import graphql_app
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -28,12 +29,11 @@ def get_application(settings: Settings, init_extras: bool = True) -> "FastAPI":
 
     app = FastAPI(
         title=settings.project_name,
-        root_path=settings.root_path,
-        version=settings.app_version,
-        routes=graphql_routes,
+        # routes=graphql_routes,
     )
 
     app.include_router(routers, prefix=settings.api_prefix)
+    app.mount("/graphql", graphql_app)
 
     if init_extras:
 
@@ -55,7 +55,7 @@ def get_application(settings: Settings, init_extras: bool = True) -> "FastAPI":
     return app
 
 
-settings = Settings()
+settings = Settings()  # type: ignore
 app = get_application(settings=settings)
 
 
@@ -65,17 +65,3 @@ def main(settings: Settings = Depends(get_settings)):
 
 if __name__ == "__main__":
     main()
-
-
-# @app.on_event("startup")
-# async def startup_event():
-#     redis = aioredis.from_url(
-#         settings.redis_cache_url, encoding="utf-8", decode_responses=True
-#     )
-#     collection = AsyncIOMotorClient(
-#         settings.mongodb_url
-#     ).weather_app.get_collection("weather_data")
-#     consumer = Consumer(collection, settings=settings)
-#     asyncio.create_task(consumer.consume())
-#     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
-#     await FastAPILimiter.init(redis)
