@@ -1,7 +1,12 @@
+import datetime
+from functools import wraps
+
 import aio_pika
+import jwt
 from aio_pika.abc import AbstractRobustConnection
-from config import get_config
-from logger.logger_config import console_log
+
+from core.config import get_config
+from core.logger.logger_config import console_log
 
 
 class RabbitService:
@@ -56,3 +61,29 @@ class RabbitService:
             async for message in queue_iter:
                 yield message
                 await message.ack()
+
+
+def auth_required(func):
+    @wraps(func)
+    async def wrapper(*args):
+        try:
+            self = args[0]
+            sid = args[1]
+            environ = list(self.server.environ.values())[0]
+
+            access_token = environ.get("HTTP_AUTHENTICATION").split(" ")[1]
+            decoded_token = jwt.decode(
+                access_token, key=get_config().JWT_SECRET_KEY, algorithms="HS256"
+            )
+            current_datetime = datetime.datetime.utcnow()
+            is_valid = current_datetime < datetime.datetime.fromtimestamp(
+                decoded_token["exp"]
+            )
+            if is_valid:
+                return await func(*args)
+            else:
+                raise Exception
+        except Exception:
+            await self.disconnect(sid=sid)
+
+    return wrapper

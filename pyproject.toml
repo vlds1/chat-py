@@ -21,6 +21,7 @@ pre-commit = "^3.3.2"
 aio-pika = "^9.0.7"
 pydantic = {extras = ["email"], version = "^1.10.8"}
 logging = "^0.4.9.6"
+pyjwt = "^2.7.0"
 
 
 [build-system]

@@ -1,10 +1,11 @@
 import uuid
 
 import socketio
-from config import get_config
-from logger.logger_config import get_logger
-from schemas.schemas import MessageSchema
-from services.chat_services import RabbitService
+
+from core.config import get_config
+from core.logger.logger_config import get_logger
+from core.schemas.schemas import MessageSchema
+from core.services.chat_services import RabbitService, auth_required
 
 
 class DefaultNameSpace(socketio.AsyncNamespace):
@@ -15,6 +16,7 @@ class DefaultNameSpace(socketio.AsyncNamespace):
         self.config = get_config()
         super().__init__(*args, **kwargs)
 
+    @auth_required
     async def on_connect(self, sid: str, environ: dict) -> None:
         self.enter_room(sid, self.room_id)
         self.logger.info(f"{sid} connected to room: {self.room_id}")
@@ -23,6 +25,7 @@ class DefaultNameSpace(socketio.AsyncNamespace):
         self.leave_room(sid, self.room_id)
         self.logger.info(f"{sid} disconnected from room: {self.room_id}")
 
+    @auth_required
     async def on_message(self, sid: str, data: dict) -> None:
         try:
             message_data = MessageSchema(**data)
