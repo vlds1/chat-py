@@ -1,8 +1,8 @@
-import datetime
+import json
 from functools import wraps
 
 import aio_pika
-import jwt
+import aiohttp
 from aio_pika.abc import AbstractRobustConnection
 
 from core.config import get_config
@@ -70,19 +70,20 @@ def auth_required(func):
             self = args[0]
             sid = args[1]
             environ = list(self.server.environ.values())[0]
-
             access_token = environ.get("HTTP_AUTHENTICATION").split(" ")[1]
-            decoded_token = jwt.decode(
-                access_token, key=get_config().JWT_SECRET_KEY, algorithms="HS256"
-            )
-            current_datetime = datetime.datetime.utcnow()
-            is_valid = current_datetime < datetime.datetime.fromtimestamp(
-                decoded_token["exp"]
-            )
-            if is_valid:
-                return await func(*args)
-            else:
-                raise Exception
+
+            async with aiohttp.ClientSession() as client:
+                async with client.post(
+                    "http://0.0.0.0:5001/api/v1/auth/token/validate",
+                    json={"access_token": access_token},
+                ) as response:
+                    response = await response.text()
+                    response = json.loads(response)
+                    token_is_valid = response["detail"]["token_is_valide"]
+                    if token_is_valid is True:
+                        return await func(*args)
+                    else:
+                        raise Exception
         except Exception:
             await self.disconnect(sid=sid)
 
