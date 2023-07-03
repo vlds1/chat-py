@@ -16,6 +16,8 @@ class AppConfig(BaseSettings):
     CHAT_ROUTING_KEY: str
     COMMAND_ROUTING_KEY: str
 
+    FLASK_BASE_URL: str
+
     JWT_SECRET_KEY: str
 
 

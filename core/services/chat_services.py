@@ -67,6 +67,7 @@ def auth_required(func):
     @wraps(func)
     async def wrapper(*args):
         try:
+            config = get_config()
             self = args[0]
             sid = args[1]
             environ = list(self.server.environ.values())[0]
@@ -74,7 +75,7 @@ def auth_required(func):
 
             async with aiohttp.ClientSession() as client:
                 async with client.post(
-                    "http://0.0.0.0:5001/api/v1/auth/token/validate",
+                    f"{config.FLASK_BASE_URL}api/v1/auth/token/validate",
                     json={"access_token": access_token},
                 ) as response:
                     response = await response.text()
