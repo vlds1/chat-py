@@ -2,9 +2,9 @@ from pydantic import BaseSettings
 from pydantic import Field
 from uvicorn.config import HTTPProtocolType
 from uvicorn.config import LoopSetupType
+from dotenv import load_dotenv
 
 from src.core.settings.base import _BaseModel
-
 
 class UvicornSettings(_BaseModel):
     """Uvicorn Settings"""
@@ -46,6 +46,7 @@ class Settings(BaseSettings):
 
 def get_settings() -> Settings:
     """Получение и кэширование настроек проекта."""
+    load_dotenv()
     _settings = Settings()
     return _settings
 

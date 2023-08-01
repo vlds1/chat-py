@@ -1,13 +1,14 @@
 import sys
 from pathlib import Path
 
+sys.path.append(str(Path(__file__).parent.parent))
+
 import uvicorn
 from fastapi import FastAPI
 
 from src.core import get_settings
 from src.weather_api.endpoints import routers
 
-sys.path.append(str(Path(__file__).parent.parent))
 
 
 settings = get_settings()
@@ -30,7 +31,7 @@ app = get_application()
 
 
 def main():
-    uvicorn.run(**settings.uvicorn.dict())
+    uvicorn.run(app=app, host="0.0.0.0", port=8001)
 
 
 if __name__ == "__main__":
